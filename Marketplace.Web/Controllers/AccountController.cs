@@ -1,0 +1,94 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using Marketplace.BusinessLogic.Core;
+using Marketplace.Domain.Entities;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace Marketplace.Web.Controllers
+{
+    public class AccountController : Controller
+    {
+        private readonly UserApi _userApi;
+
+        public AccountController(UserApi userApi)
+        {
+            _userApi = userApi;
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(string username, string password)
+        {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                ViewBag.Error = "Please enter username and password";
+                return View();
+            }
+
+            var user = _userApi.ValidateUser(username, password);
+            if (user != null)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role.ToString())
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+                var authProperties = new AuthenticationProperties();
+
+                await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            ViewBag.Error = "Invalid credentials";
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Default role to Client if not specified
+                    if (user.Role == 0) user.Role = Domain.Enums.UserRole.Client;
+
+                    _userApi.Register(user);
+                    return RedirectToAction("Login");
+                }
+                catch (System.Exception ex)
+                {
+                    ViewBag.Error = ex.Message;
+                }
+            }
+            return View(user);
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("CookieAuth");
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+    }
+}
