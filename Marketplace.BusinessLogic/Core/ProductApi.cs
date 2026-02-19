@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Marketplace.BusinessLogic.Interfaces;
 using Marketplace.Data.Interfaces;
 using Marketplace.Domain.Entities;
@@ -17,6 +18,11 @@ namespace Marketplace.BusinessLogic.Core
         public IEnumerable<Product> GetProducts()
         {
             return _productRepository.GetAll();
+        }
+
+        public IEnumerable<Product> GetProductsByUserId(int userId)
+        {
+            return _productRepository.GetAll().Where(p => p.UserId == userId);
         }
 
         public Product GetProductById(int id)

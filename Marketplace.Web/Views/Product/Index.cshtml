@@ -1,45 +1,102 @@
 @model IEnumerable<Marketplace.Domain.Entities.Product>
 
 @{
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Browse Products";
+    var currentCategory = ViewBag.CurrentCategory as string;
+    var currentBrand = ViewBag.CurrentBrand as string;
 }
 
-<h2>Products</h2>
+<div class="row align-items-end mb-5">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-2">Explore Technology</h1>
+        <p class="text-muted fs-5">Descoperă cele mai noi produse de la branduri de top.</p>
+    </div>
+    <div class="col-lg-6">
+        <form asp-action="Index" method="get" class="row g-2 justify-content-lg-end">
+            <div class="col-auto">
+                <select name="category" class="form-select" onchange="this.form.submit()">
+                    <option value="">Toate Categoriile</option>
+                    <option value="Telefoane" selected="@(currentCategory == "Telefoane")">Telefoane</option>
+                    <option value="Laptopuri" selected="@(currentCategory == "Laptopuri")">Laptopuri</option>
+                    <option value="Audio" selected="@(currentCategory == "Audio")">Audio</option>
+                    <option value="Accesorii" selected="@(currentCategory == "Accesorii")">Accesorii</option>
+                    <option value="Software" selected="@(currentCategory == "Software")">Software</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <input type="text" name="brand" class="form-control" placeholder="Caută Brand (ex: Apple)"
+                    value="@currentBrand" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Filtrează</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-@if (User.IsInRole("Admin"))
+@if (!Model.Any())
 {
-    <p>
-        <a asp-action="Create" class="btn btn-success">Create New Product</a>
-    </p>
+    <div class="empty-state text-center py-5">
+        <div class="display-1 text-light mb-4 text-center w-100">
+            <i class="bi bi-search"></i>
+        </div>
+        <h3>Niciun produs găsit</h3>
+        <p class="text-muted">Încearcă să schimbi filtrele sau să cauți altceva.</p>
+        <a asp-action="Index" class="btn btn-outline">Resetează Filtrele</a>
+    </div>
 }
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
+else
+{
+    <div class="row g-4 product-grid-minimal">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
-                <td>@item.Price.ToString("C")</td>
-                <td>@item.Stock</td>
-                <td>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Are you sure?');">Delete</a>
-                    }
-                </td>
-            </tr>
+            <div class="col">
+                <div class="product-card-minimal card-minimal h-100">
+                    <div class="position-relative">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name"
+                                style="height: 240px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 240px;">
+                                <span class="display-1 text-white opacity-25">@item.Name[0]</span>
+                            </div>
+                        }
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <span class="badge @(item.IsDigital == true ? "bg-info" : "bg-secondary")">
+                                @(item.IsDigital == true ? "Digital" : "Physical")
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted small mb-1 text-uppercase fw-bold letter-spacing-wide">@(item.Brand ?? "Unknown")</p>
+                        <h5 class="card-title fw-bold mb-2">@(item.Name ?? "Unnamed Product")</h5>
+                        <p class="card-text text-muted small mb-4 text-truncate-2">@(item.Description ?? "No description available.")</p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <span class="fs-4 fw-bold text-primary">@item.Price?.ToString("C")</span>
+                            <button class="btn btn-primary btn-sm px-3">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+}
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .letter-spacing-wide {
+            letter-spacing: 0.1em;
+        }
+    </style>
+}

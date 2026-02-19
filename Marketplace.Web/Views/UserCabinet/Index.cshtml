@@ -1,0 +1,76 @@
+@model IEnumerable<Marketplace.Domain.Entities.Product>
+
+@{
+    ViewData["Title"] = "My Cabinet";
+}
+
+<div class="cabinet-header mb-5">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="display-5 fw-bold mb-1">Cabinet Personal</h1>
+            <p class="text-muted">Gestionează produsele tale și vizualizează performanța lor.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-lg"></i> Adaugă Produs Nou
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    @if (!Model.Any())
+    {
+        <div class="col-12 text-center py-5">
+            <div class="empty-state">
+                <i class="bi bi-basket display-1 text-light mb-3"></i>
+                <h3>Nu ai niciun produs listat</h3>
+                <p class="text-muted mb-4">Începe să vinzi chiar acum prin adăugarea primului tău produs.</p>
+                <a asp-action="Create" class="btn btn-outline-primary">Adaugă primul produs</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card product-card-minimal">
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="product-placeholder text-center py-5 bg-light">
+                            <i class="bi bi-image text-muted display-4"></i>
+                        </div>
+                    }
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">@(item.Name ?? "Fără nume")</h5>
+                            <span class="badge @(item.IsDigital == true ? "bg-info" : "bg-secondary") text-white">
+                                @(item.IsDigital == true ? "Digital" : "Fizic")
+                            </span>
+                        </div>
+                        <p class="card-text text-muted small mb-3 text-truncate">@(item.Description ?? "Nicio descriere")</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fs-4 fw-bold text-primary">@item.Price?.ToString("C")</span>
+                            <div class="btn-group btn-group-sm">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger"
+                                    onclick="return confirm('Ești sigur că vrei să ștergi acest produs?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+}

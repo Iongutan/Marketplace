@@ -37,6 +37,7 @@ namespace Marketplace.Web.Controllers
             {
                 var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Role, user.Role.ToString())
                 };
@@ -62,12 +63,17 @@ namespace Marketplace.Web.Controllers
         [HttpPost]
         public IActionResult Register(User user)
         {
+            // Remove properties that are not handled by the form to avoid validation issues
+            ModelState.Remove("CreatedDate");
+            ModelState.Remove("Id");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Default role to Client if not specified
-                    if (user.Role == 0) user.Role = Domain.Enums.UserRole.Client;
+                    // Default role to Client if not specified (handle null or default)
+                    if (user.Role == null || (int)user.Role == 0)
+                        user.Role = Domain.Enums.UserRole.Client;
 
                     _userApi.Register(user);
                     return RedirectToAction("Login");
@@ -76,6 +82,10 @@ namespace Marketplace.Web.Controllers
                 {
                     ViewBag.Error = ex.Message;
                 }
+            }
+            else
+            {
+                ViewBag.Error = "Please correct the errors in the form.";
             }
             return View(user);
         }

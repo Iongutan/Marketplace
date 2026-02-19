@@ -1,8 +1,70 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Premium Marketplace";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<section class="hero-minimal py-5 mb-5 rounded shadow-sm">
+    <div class="container py-5">
+        <h1 class="display-3 fw-bold mb-3">Premium Technology <br /> Marketplace</h1>
+        <p class="text-muted fs-5 mb-5 mx-auto" style="max-width: 600px;">
+            Descoperă o selecție curată de gadget-uri și software de la cele mai renumite branduri.
+            Minimalism, calitate și securitate într-un singur loc.
+        </p>
+        <div class="d-flex gap-3 justify-content-center">
+            <a asp-controller="Product" asp-action="Index" class="btn btn-primary btn-lg px-5">
+                Răsfoiește Produse
+            </a>
+            @if (!(User.Identity?.IsAuthenticated ?? false))
+            {
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline btn-lg px-5">
+                    Înregistrează-te
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card-minimal h-100 p-4 animate-fade-in text-center">
+            <div class="display-5 mb-3">⚡</div>
+            <h3 class="fw-bold mb-2">Livrare Rapidă</h3>
+            <p class="text-muted small">Produsele tale ajung la tine în cel mai scurt timp, oriunde în țară.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-minimal h-100 p-4 animate-fade-in text-center" style="animation-delay: 0.1s;">
+            <div class="display-5 mb-3">🛡️</div>
+            <h3 class="fw-bold mb-2">Garanție Premium</h3>
+            <p class="text-muted small">Fiecare produs este verificat pentru a asigura cele mai înalte standarde.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-minimal h-100 p-4 animate-fade-in text-center" style="animation-delay: 0.2s;">
+            <div class="display-5 mb-3">💳</div>
+            <h3 class="fw-bold mb-2">Plăți Securizate</h3>
+            <p class="text-muted small">Tranzacții protejate prin tehnologii de criptare de ultimă generație.</p>
+        </div>
+    </div>
 </div>
+
+<div class="py-5 text-center">
+    <h2 class="display-6 fw-bold mb-5">Top Brands</h2>
+    <div class="d-flex flex-wrap justify-content-center gap-5 opacity-50 grayscale">
+        <span class="fs-4 fw-bold">APPLE</span>
+        <span class="fs-4 fw-bold">SAMSUNG</span>
+        <span class="fs-4 fw-bold">SONY</span>
+        <span class="fs-4 fw-bold">DELL</span>
+        <span class="fs-4 fw-bold">MICROSOFT</span>
+    </div>
+</div>
+
+<style>
+    .grayscale {
+        filter: grayscale(1);
+    }
+
+    .hero-minimal {
+        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        border: 1px solid var(--border-color);
+    }
+</style>

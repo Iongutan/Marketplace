@@ -1,38 +1,57 @@
 @model Marketplace.Domain.Entities.User
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Join Marketplace";
 }
 
-<h2>Register</h2>
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card card-minimal shadow-lg p-4 p-md-5">
+            <div class="mb-4 text-center">
+                <h2 class="fw-bold mb-1">Create an Account</h2>
+                <p class="text-muted">Join our community to start buying and selling today.</p>
+            </div>
 
-@if (ViewBag.Error != null)
-{
-    <div class="alert alert-danger">@ViewBag.Error</div>
-}
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger border-0 shadow-sm mb-4">@ViewBag.Error</div>
+            }
 
-<form asp-action="Register" method="post">
-    <div class="form-group">
-        <label asp-for="Username"></label>
-        <input asp-for="Username" class="form-control" required />
-        <span asp-validation-for="Username" class="text-danger"></span>
+            <form asp-action="Register" method="post">
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label asp-for="Username" class="form-label">Username</label>
+                        <input asp-for="Username" class="form-control" placeholder="choose_a_username" required />
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="name@example.com"
+                            required />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••••"
+                            required />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-12 mt-4">
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-4">
+                            Create Account
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center">
+                <p class="text-muted small mb-0">
+                    Already have an account? <a asp-controller="Account" asp-action="Login" class="fw-bold">Sign in</a>
+                </p>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" type="email" class="form-control" required />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" class="form-control" required />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label>Role</label>
-        <select asp-for="Role" class="form-control">
-            <option value="Client">Client</option>
-            <option value="Admin">Admin</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+</div>

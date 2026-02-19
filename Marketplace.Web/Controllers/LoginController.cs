@@ -1,12 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
+// This file is intentionally left empty.
+// Login functionality is handled by AccountController.
 
-namespace Marketplace.Web.Controllers
-{
-    public class LoginController : Controller
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
-    }
-}

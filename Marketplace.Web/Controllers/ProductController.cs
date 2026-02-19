@@ -14,9 +14,23 @@ namespace Marketplace.Web.Controllers
             _productService = productService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? category, string? brand)
         {
             var products = _productService.GetProducts();
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                products = products.Where(p => p.Category == category);
+            }
+
+            if (!string.IsNullOrEmpty(brand))
+            {
+                products = products.Where(p => p.Brand != null && p.Brand.Contains(brand, System.StringComparison.OrdinalIgnoreCase));
+            }
+
+            ViewBag.CurrentCategory = category;
+            ViewBag.CurrentBrand = brand;
+
             return View(products);
         }
 
