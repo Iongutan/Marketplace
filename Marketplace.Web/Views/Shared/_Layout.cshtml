@@ -26,33 +26,33 @@
                 <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">
                     🛒 Marketplace
                 </a>
-                
+
                 <ul class="nav-links d-none d-md-flex">
                     <li><a class="nav-link-minimal" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a class="nav-link-minimal" asp-controller="Product" asp-action="Index">Browse Products</a></li>
-                    
+
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        <li><a class="nav-link-minimal fw-bold" asp-controller="UserCabinet" asp-action="Index">My Cabinet</a></li>
-                        
+                            <li><a class="nav-link-minimal fw-bold" asp-controller="UserCabinet" asp-action="Index">My Cabinet</a></li>
+
                         @if (User.IsInRole("Admin"))
                         {
-                            <li><a class="nav-link-minimal text-danger" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a></li>
+                                    <li><a class="nav-link-minimal text-danger" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a></li>
                         }
-                        
-                        <li class="ms-3">
-                            <span class="nav-link-minimal text-muted">@User.Identity.Name</span>
-                        </li>
-                        <li>
-                            <a class="btn btn-outline" asp-controller="Account" asp-action="Logout">Logout</a>
-                        </li>
+
+                            <li class="ms-3">
+                                <span class="nav-link-minimal text-muted">@User.Identity.Name</span>
+                            </li>
+                            <li>
+                                <a class="btn btn-outline" asp-controller="Account" asp-action="Logout">Logout</a>
+                            </li>
                     }
                     else
                     {
-                        <li><a class="nav-link-minimal" asp-controller="Account" asp-action="Login">Login</a></li>
-                        <li>
-                            <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Join Marketplace</a>
-                        </li>
+                            <li><a class="nav-link-minimal" asp-controller="Account" asp-action="Login">Login</a></li>
+                            <li>
+                                <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Join Marketplace</a>
+                            </li>
                     }
                 </ul>
             </div>
@@ -78,5 +78,4 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-
 </html>

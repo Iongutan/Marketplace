@@ -52,4 +52,3 @@ namespace Marketplace.BusinessLogic.Core
         }
     }
 }
-

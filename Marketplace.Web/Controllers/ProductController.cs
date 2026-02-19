@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.BusinessLogic.Interfaces;
 using Marketplace.Domain.Entities;
+using System.Linq;
 
 namespace Marketplace.Web.Controllers
 {
@@ -34,14 +35,11 @@ namespace Marketplace.Web.Controllers
             return View(products);
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Create(Product product)
         {
