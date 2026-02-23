@@ -1,14 +1,61 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.Web.Models;
+using Marketplace.BusinessLogic.Interfaces;
+using System.Linq;
 
 namespace Marketplace.Web.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
+    private readonly IProductService _productService;
+
+    public HomeController(IProductService productService)
     {
-        return View();
+        _productService = productService;
+    }
+
+    public IActionResult Index(string? category, string? brand, string? search)
+    {
+        var products = _productService.GetProducts();
+
+        if (!string.IsNullOrEmpty(category))
+        {
+            if (category == "Produse Online")
+            {
+                products = products.Where(p => p.Category == "Produse Online" || p.Category == "Software" || p.IsDigital == true);
+            }
+            else if (category == "Produse Electronice")
+            {
+                products = products.Where(p => p.Category == "Produse Electronice" || p.Category == "Electronice" || p.Category == "Electronics");
+            }
+            else if (category == "Interior")
+            {
+                products = products.Where(p => p.Category == "Interior" || p.Category == "Mobilă" || p.Category == "Produse Fizice");
+            }
+            else
+            {
+                products = products.Where(p => p.Category == category);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(brand))
+        {
+            products = products.Where(p => p.Brand != null && p.Brand.Contains(brand, System.StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            products = products.Where(p =>
+                (p.Name != null && p.Name.Contains(search, System.StringComparison.OrdinalIgnoreCase)) ||
+                (p.Description != null && p.Description.Contains(search, System.StringComparison.OrdinalIgnoreCase)));
+        }
+
+        ViewBag.CurrentCategory = category;
+        ViewBag.CurrentBrand = brand;
+        ViewBag.CurrentSearch = search;
+
+        return View(products);
     }
 
     public IActionResult Privacy()

@@ -38,8 +38,8 @@ namespace Marketplace.Web.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Role, user.Role.ToString())
+                    new Claim(ClaimTypes.Name, user.Username ?? "Unknown"),
+                    new Claim(ClaimTypes.Role, user.Role?.ToString() ?? "Client")
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");

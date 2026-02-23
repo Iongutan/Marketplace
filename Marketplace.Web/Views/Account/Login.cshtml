@@ -6,8 +6,8 @@
     <div class="col-md-5">
         <div class="card card-minimal shadow-lg p-4 p-md-5">
             <div class="mb-4 text-center">
-                <h2 class="fw-bold mb-1">Welcome Back</h2>
-                <p class="text-muted">Enter your credentials to access your account.</p>
+                <h2 class="fw-bold mb-1">Bine ai revenit</h2>
+                <p class="text-muted">Introdu datele tale pentru a accesa contul.</p>
             </div>
 
             @if (ViewBag.Error != null)
@@ -17,27 +17,27 @@
 
             <form asp-controller="Account" asp-action="Login" method="post">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" name="username" id="username" class="form-control" placeholder="your_username"
+                    <label for="username" class="form-label">Nume utilizator</label>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="nume_utilizator"
                         required />
                 </div>
                 <div class="mb-4">
                     <div class="d-flex justify-content-between">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">Parolă</label>
                     </div>
                     <input type="password" name="password" id="password" class="form-control" placeholder="••••••••"
                         required />
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 btn-lg mb-4">
-                    Sign In
+                    Autentificare
                 </button>
             </form>
 
             <div class="text-center">
                 <p class="text-muted small mb-0">
-                    Don't have an account? <a asp-controller="Account" asp-action="Register" class="fw-bold">Join
-                        now</a>
+                    Nu ai un cont? <a asp-controller="Account" asp-action="Register" class="fw-bold">Înregistrează-te
+                        acum</a>
                 </p>
             </div>
         </div>

@@ -1,70 +1,116 @@
-﻿@{
-    ViewData["Title"] = "Premium Marketplace";
+﻿@model IEnumerable<Marketplace.Domain.Entities.Product>
+@{
+    ViewData["Title"] = "Marketplace";
+    var currentCategory = ViewBag.CurrentCategory as string;
+    var currentSearch = ViewBag.CurrentSearch as string;
+
+
 }
 
-<section class="hero-minimal py-5 mb-5 rounded shadow-sm">
-    <div class="container py-5">
-        <h1 class="display-3 fw-bold mb-3">Premium Technology <br /> Marketplace</h1>
-        <p class="text-muted fs-5 mb-5 mx-auto" style="max-width: 600px;">
-            Descoperă o selecție curată de gadget-uri și software de la cele mai renumite branduri.
-            Minimalism, calitate și securitate într-un singur loc.
-        </p>
-        <div class="d-flex gap-3 justify-content-center">
-            <a asp-controller="Product" asp-action="Index" class="btn btn-primary btn-lg px-5">
-                Răsfoiește Produse
-            </a>
-            @if (!(User.Identity?.IsAuthenticated ?? false))
+<div class="container mt-4">
+
+
+    <div class="row g-4">
+        <!-- Sidebar Categories -->
+        <aside class="col-md-3">
+            @await Html.PartialAsync("_CategorySidebar")
+        </aside>
+
+        <!-- Main Product Grid -->
+        <main class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <h5 class="fw-bold m-0 text-muted text-uppercase small">Recomandate</h5>
+            </div>
+
+            @if (!Model.Any())
             {
-                <a asp-controller="Account" asp-action="Register" class="btn btn-outline btn-lg px-5">
-                    Înregistrează-te
-                </a>
+                <div class="text-center py-5">
+                    <p class="text-muted">Niciun anunț găsit în această categorie.</p>
+                    <a asp-action="Index" class="btn btn-outline btn-sm">Resetează filtrele</a>
+                </div>
             }
-        </div>
-    </div>
-</section>
-
-<div class="row g-4 mb-5">
-    <div class="col-md-4">
-        <div class="card-minimal h-100 p-4 animate-fade-in text-center">
-            <div class="display-5 mb-3">⚡</div>
-            <h3 class="fw-bold mb-2">Livrare Rapidă</h3>
-            <p class="text-muted small">Produsele tale ajung la tine în cel mai scurt timp, oriunde în țară.</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card-minimal h-100 p-4 animate-fade-in text-center" style="animation-delay: 0.1s;">
-            <div class="display-5 mb-3">🛡️</div>
-            <h3 class="fw-bold mb-2">Garanție Premium</h3>
-            <p class="text-muted small">Fiecare produs este verificat pentru a asigura cele mai înalte standarde.</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card-minimal h-100 p-4 animate-fade-in text-center" style="animation-delay: 0.2s;">
-            <div class="display-5 mb-3">💳</div>
-            <h3 class="fw-bold mb-2">Plăți Securizate</h3>
-            <p class="text-muted small">Tranzacții protejate prin tehnologii de criptare de ultimă generație.</p>
-        </div>
-    </div>
-</div>
-
-<div class="py-5 text-center">
-    <h2 class="display-6 fw-bold mb-5">Top Brands</h2>
-    <div class="d-flex flex-wrap justify-content-center gap-5 opacity-50 grayscale">
-        <span class="fs-4 fw-bold">APPLE</span>
-        <span class="fs-4 fw-bold">SAMSUNG</span>
-        <span class="fs-4 fw-bold">SONY</span>
-        <span class="fs-4 fw-bold">DELL</span>
-        <span class="fs-4 fw-bold">MICROSOFT</span>
+            else
+            {
+                <div class="row g-4 row-cols-1 row-cols-md-3">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col">
+                            <div class="product-card-premium">
+                                <div class="image-container">
+                                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Name"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="w-100 h-100 d-none align-items-center justify-content-center bg-light">
+                                            <span class="opacity-10 display-1 fw-bold">M</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                            <span class="opacity-10 display-1 fw-bold">M</span>
+                                        </div>
+                                    }
+                                    <div class="badges-overlay">
+                                        @if (item.IsDigital == true)
+                                        {
+                                            <span class="badge-premium badge-online">Online</span>
+                                        }
+                                        <span class="badge-premium badge-clone">TOP</span>
+                                    </div>
+                                </div>
+                                <div class="brand-name">@(item.Brand ?? "MARKETPLACE")</div>
+                                <h3 class="product-title">@item.Name</h3>
+                                <p class="product-desc">@(item.Description ?? "Fără descriere disponibilă.")</p>
+                                <div class="card-footer-premium">
+                                    <div class="price-tag">@((item.Price ?? 0).ToString("N0")) MDL</div>
+                                    <a asp-controller="Product" asp-action="Checkout" asp-route-id="@item.Id"
+                                        class="btn-buy-premium text-decoration-none">Cumpără</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </main>
     </div>
 </div>
 
 <style>
-    .grayscale {
-        filter: grayscale(1);
+    .text-accent {
+        color: #2563eb;
     }
 
-    .hero-minimal {
-        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-        border: 1px solid var(--border-color);
+    .text-accent:hover {
+        color: #1d4ed8;
+        text-decoration: underline !important;
+    }
+
+    .sidebar-categories li a {
+        font-size: 0.95rem;
+        transition: color 0.2s;
+    }
+
+    .home-product-card:hover .transition-transform {
+        transform: scale(1.05);
+    }
+
+    .banner-card {
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .banner-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+
+    .transition-transform {
+        transition: transform 0.3s ease;
     }
 </style>

@@ -1,8 +1,10 @@
 using System;
 
+using Marketplace.Domain.Interfaces;
+
 namespace Marketplace.Domain.Entities
 {
-    public class Product : BaseEntity
+    public class Product : BaseEntity, IPrototype<Product>
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
@@ -13,6 +15,11 @@ namespace Marketplace.Domain.Entities
         public string? Brand { get; set; }
         public string? ImageUrl { get; set; }
         public bool? IsDigital { get; set; }
+
+        public Product Clone()
+        {
+            return (Product)this.MemberwiseClone();
+        }
 
         public override string GetEntityDetails()
         {

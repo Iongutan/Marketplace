@@ -11,10 +11,12 @@ namespace Marketplace.Web.Controllers
     public class UserCabinetController : Controller
     {
         private readonly IProductService _productService;
+        private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _webHostEnvironment;
 
-        public UserCabinetController(IProductService productService)
+        public UserCabinetController(IProductService productService, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment)
         {
             _productService = productService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -31,11 +33,8 @@ namespace Marketplace.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public async System.Threading.Tasks.Task<IActionResult> Create(Product product, Microsoft.AspNetCore.Http.IFormFile? ImageFile)
         {
-            product.UserId = GetUserId();
-            product.CreatedDate = System.DateTime.Now;
-
             // Simple validation override for internal fields
             ModelState.Remove("UserId");
             ModelState.Remove("CreatedDate");
@@ -43,7 +42,23 @@ namespace Marketplace.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                _productService.AddProduct(product);
+                // Standardize with Factory Method pattern
+                Marketplace.BusinessLogic.Factories.ProductFactory factory;
+                if (product.IsDigital == true)
+                    factory = new Marketplace.BusinessLogic.Factories.DigitalProductFactory();
+                else
+                    factory = new Marketplace.BusinessLogic.Factories.PhysicalProductFactory();
+
+                var newProduct = factory.CreateProduct(product.Name ?? "Unnamed", product.Price ?? 0, product.Stock ?? 0);
+                newProduct.Description = product.Description;
+                newProduct.Brand = product.Brand;
+                newProduct.Category = product.Category;
+                newProduct.ImageUrl = await SaveImage(ImageFile) ?? product.ImageUrl;
+                newProduct.IsDigital = product.IsDigital;
+                newProduct.UserId = GetUserId();
+                newProduct.CreatedDate = System.DateTime.Now;
+
+                _productService.AddProduct(newProduct);
                 return RedirectToAction("Index");
             }
             return View(product);
@@ -61,7 +76,7 @@ namespace Marketplace.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Product product)
+        public async System.Threading.Tasks.Task<IActionResult> Edit(Product product, Microsoft.AspNetCore.Http.IFormFile? ImageFile)
         {
             var existingProduct = _productService.GetProductById(product.Id);
             if (existingProduct == null || existingProduct.UserId != GetUserId())
@@ -78,6 +93,11 @@ namespace Marketplace.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                var uploadedPath = await SaveImage(ImageFile);
+                if (uploadedPath != null)
+                {
+                    product.ImageUrl = uploadedPath;
+                }
                 _productService.UpdateProduct(product);
                 return RedirectToAction("Index");
             }
@@ -99,6 +119,23 @@ namespace Marketplace.Web.Controllers
         {
             var claim = User.FindFirst(ClaimTypes.NameIdentifier);
             return claim != null ? int.Parse(claim.Value) : 0;
+        }
+        private async System.Threading.Tasks.Task<string?> SaveImage(Microsoft.AspNetCore.Http.IFormFile? imageFile)
+        {
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadsFolder = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "products");
+                var uniqueFileName = System.Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                var filePath = System.IO.Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(fileStream);
+                }
+
+                return "/uploads/products/" + uniqueFileName;
+            }
+            return null;
         }
     }
 }

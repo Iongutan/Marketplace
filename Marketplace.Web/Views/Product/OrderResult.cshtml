@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<div class="container py-5 text-center">
+    <div class="display-1 mb-4">Succes</div>
+    <h1 class="fw-bold mb-3">Vă mulțumim pentru comandă!</h1>
+    <p class="text-muted fs-5 mb-5">Comanda dumneavoastră a fost procesată cu succes folosind sistemul nostru
+        inteligent.</p>
+
+    <div class="card card-minimal p-4 mb-5 mx-auto" style="max-width: 600px;">
+        <h4 class="fw-bold mb-3">Detalii Procesare (Abstract Factory)</h4>
+        <div class="bg-light p-3 rounded border">
+            <p class="mb-0"><code>@ViewBag.Message</code></p>
+        </div>
+    </div>
+
+    <a asp-action="Index" class="btn btn-primary px-5">Înapoi la Produse</a>
+</div>

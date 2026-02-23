@@ -1,0 +1,51 @@
+@{
+    var currentCategory = ViewBag.CurrentCategory as string;
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var currentBrand = ViewBag.CurrentBrand as string;
+
+    var categories = new[] {
+"Interior", "Produse Electronice", "Produse Online", "Servicii"
+};
+}
+
+<div class="card-minimal p-4 mb-4 shadow-sm border-0 bg-white rounded-4">
+    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+        Categorii
+    </h5>
+    <div class="d-flex flex-column gap-1 sidebar-categories">
+        <a asp-controller="Home" asp-action="Index" asp-route-search="@currentSearch" asp-route-brand="@currentBrand"
+            class="nav-link-minimal p-2 rounded-3 @(string.IsNullOrEmpty(currentCategory) ? "active fw-bold bg-light" : "")">
+            Toate Categoriile
+        </a>
+        @foreach (var cat in categories)
+        {
+            <a asp-controller="Home" asp-action="Index" asp-route-category="@cat" asp-route-search="@currentSearch"
+                asp-route-brand="@currentBrand"
+                class="nav-link-minimal p-2 rounded-3 @(currentCategory == cat ? "active fw-bold bg-light" : "")">
+                @cat
+            </a>
+        }
+    </div>
+</div>
+
+<style>
+    .sidebar-categories .nav-link-minimal {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        display: block;
+        text-decoration: none;
+    }
+
+    .sidebar-categories .nav-link-minimal:hover {
+        background-color: var(--bg-alt);
+        color: var(--text-main);
+        padding-left: 1rem !important;
+    }
+
+    .sidebar-categories .nav-link-minimal.active {
+        color: var(--primary-color);
+        background-color: #f1f5f9;
+        font-weight: 700;
+    }
+</style>

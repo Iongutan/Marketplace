@@ -4,77 +4,102 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="mb-5">
-    <h1 class="display-5 fw-bold mb-1">Admin Dashboard</h1>
-    <p class="text-muted">Supraveghere globală a tuturor anunțurilor și activității utilizatorilor.</p>
-</div>
+<div class="row g-4">
+    <aside class="col-md-3">
+        @await Html.PartialAsync("_CategorySidebar")
+    </aside>
 
-<div class="card card-minimal shadow-sm border-0">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead>
-                <tr class="bg-alt">
-                    <th class="ps-4 py-3 text-uppercase small fw-bold text-muted">Produs</th>
-                    <th class="py-3 text-uppercase small fw-bold text-muted">Categorie</th>
-                    <th class="py-3 text-uppercase small fw-bold text-muted">Brand</th>
-                    <th class="py-3 text-uppercase small fw-bold text-muted">Preț</th>
-                    <th class="py-3 text-uppercase small fw-bold text-muted">Proprietar</th>
-                    <th class="py-3 text-uppercase small fw-bold text-muted text-end pe-4">Acțiuni</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td class="ps-4">
-                            <div class="d-flex align-items-center">
-                                @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                {
-                                    <img src="@item.ImageUrl" class="rounded me-3"
-                                        style="width: 48px; height: 48px; object-fit: cover; border: 1px solid var(--border-color);">
-                                }
-                                else
-                                {
-                                    <div class="rounded me-3 bg-light d-flex align-items-center justify-content-center"
-                                        style="width: 48px; height: 48px; border: 1px solid var(--border-color);">
-                                        <span class="text-muted fw-bold">@item.Name[0]</span>
+    <main class="col-md-9">
+        <div class="mb-5 d-flex justify-content-between align-items-end">
+            <div>
+                <h1 class="display-5 fw-bold mb-1">Admin Dashboard</h1>
+                <p class="text-muted">Supraveghere globală a tuturor anunțurilor și activității utilizatorilor.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="QuickCreate" asp-route-type="Laptop"
+                    class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                    + Laptop Rapid
+                </a>
+                <a asp-action="QuickCreate" asp-route-type="EBook"
+                    class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm">
+                    + E-Book Rapid
+                </a>
+            </div>
+        </div>
+
+        <div class="card card-minimal shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr class="bg-alt">
+                            <th class="ps-4 py-3 text-uppercase small fw-bold text-muted">Produs</th>
+                            <th class="py-3 text-uppercase small fw-bold text-muted">Categorie</th>
+                            <th class="py-3 text-uppercase small fw-bold text-muted">Brand</th>
+                            <th class="py-3 text-uppercase small fw-bold text-muted">Preț</th>
+                            <th class="py-3 text-uppercase small fw-bold text-muted">Proprietar</th>
+                            <th class="py-3 text-uppercase small fw-bold text-muted text-end pe-4">Acțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@item.ImageUrl" class="rounded-3 me-3"
+                                                style="width: 56px; height: 56px; object-fit: cover; border: 1px solid #f1f5f9;">
+                                        }
+                                        else
+                                        {
+                                            <div class="rounded-3 me-3 bg-light d-flex align-items-center justify-content-center"
+                                                style="width: 56px; height: 56px; border: 1px solid #f1f5f9;">
+                                                <span class="text-muted fw-bold">M</span>
+                                            </div>
+                                        }
+                                        <div>
+                                            <div class="fw-bold text-main fs-6">@item.Name</div>
+                                            <div class="text-muted small">Brand: @(item.Brand ?? "N/A")</div>
+                                        </div>
                                     </div>
-                                }
-                                <div>
-                                    <div class="fw-bold text-main">@item.Name</div>
-                                    <div class="text-muted small">Stoc: @item.Stock unități</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge @(item.IsDigital == true ? "bg-info" : "bg-secondary") text-uppercase">
-                                @(item.Category ?? "Fără Categorie")
-                            </span>
-                        </td>
-                        <td class="text-muted">@(item.Brand ?? "N/A")</td>
-                        <td class="fw-bold">@item.Price?.ToString("C")</td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-light text-muted border">USR#@item.UserId</span>
-                            </div>
-                        </td>
-                        <td class="text-end pe-4">
-                            <div class="d-flex justify-content-end gap-2">
-                                <a asp-action="EditProduct" asp-route-id="@item.Id" class="btn btn-outline btn-sm px-3">
-                                    Edit
-                                </a>
-                                <a asp-action="DeleteProduct" asp-route-id="@item.Id"
-                                    class="btn btn-light btn-sm px-3 text-danger"
-                                    onclick="return confirm('Ești sigur că vrei să ștergi acest produs?')">
-                                    Delete
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge @(item.IsDigital == true ? "bg-info" : "bg-secondary") rounded-pill px-3">
+                                        @(item.IsDigital == true ? "Online" : "Fizic")
+                                    </span>
+                                </td>
+                                <td class="text-muted small">@item.Category</td>
+                                <td class="fw-bold">@((item.Price ?? 0).ToString("N0")) MDL</td>
+                                <td>
+                                    <span
+                                        class="badge bg-light text-muted border border-light-subtle rounded-pill">ID#@item.UserId</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a asp-action="EditProduct" asp-route-id="@item.Id"
+                                            class="btn btn-outline-primary btn-sm px-3">
+                                            Editează
+                                        </a>
+                                        <a asp-action="DuplicateProduct" asp-route-id="@item.Id"
+                                            class="btn btn-light btn-sm px-3">
+                                            Clonează
+                                        </a>
+                                        <a asp-action="DeleteProduct" asp-route-id="@item.Id"
+                                            class="btn btn-light btn-sm px-3 text-danger"
+                                            onclick="return confirm('Ești sigur că vrei să ștergi acest produs?')">
+                                            Șterge
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 </div>
 
 <style>

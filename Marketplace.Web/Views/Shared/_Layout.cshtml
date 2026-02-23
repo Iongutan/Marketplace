@@ -1,10 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using Marketplace.BusinessLogic.Singletons
+@{
+    var settings = MarketplaceSettings.Instance;
+}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Marketplace</title>
+    <title>@ViewData["Title"] - @settings.SiteName</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,40 +25,49 @@
 <body class="animate-fade-in">
 
     <header>
-        <nav class="navbar-minimal">
-            <div class="container">
-                <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    🛒 Marketplace
+        <nav class="navbar-minimal py-3">
+            <div class="container d-flex align-items-center gap-4">
+                <a class="brand flex-shrink-0" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="text-primary">Marketplace</span>
                 </a>
 
-                <ul class="nav-links d-none d-md-flex">
-                    <li><a class="nav-link-minimal" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a class="nav-link-minimal" asp-controller="Product" asp-action="Index">Browse Products</a></li>
+                <div class="flex-grow-1 mx-2">
+                    <form asp-controller="Home" asp-action="Index" method="get" class="d-flex">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control border-end-0"
+                                placeholder="Căutare în anunțuri"
+                                value="@ViewContext.HttpContext.Request.Query["search"]">
+                            <button class="btn btn-outline border-start-0 bg-white" type="submit">
+                                <span class="opacity-50">Căutare</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-                    @if (User.Identity != null && User.Identity.IsAuthenticated)
-                    {
-                            <li><a class="nav-link-minimal fw-bold" asp-controller="UserCabinet" asp-action="Index">My Cabinet</a></li>
+                <div class="d-flex align-items-center gap-3 flex-shrink-0">
+                    <a asp-controller="Product" asp-action="Create" class="btn btn-success px-4"
+                        style="background-color: #71b32d; border-color: #71b32d;">
+                        Adaugă anunț
+                    </a>
 
-                        @if (User.IsInRole("Admin"))
+                    <ul class="nav-links m-0 p-0 d-none d-lg-flex">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                                    <li><a class="nav-link-minimal text-danger" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a></li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li><a class="nav-link-minimal text-danger" asp-controller="Admin"
+                                        asp-action="Dashboard">Admin</a></li>
+                            }
+                            <li><a class="nav-link-minimal" asp-controller="UserCabinet" asp-action="Index">Cabinet</a></li>
+                            <li><a class="btn btn-light btn-sm" asp-controller="Account" asp-action="Logout">Ieșire</a></li>
                         }
-
-                            <li class="ms-3">
-                                <span class="nav-link-minimal text-muted">@User.Identity.Name</span>
-                            </li>
-                            <li>
-                                <a class="btn btn-outline" asp-controller="Account" asp-action="Logout">Logout</a>
-                            </li>
-                    }
-                    else
-                    {
-                            <li><a class="nav-link-minimal" asp-controller="Account" asp-action="Login">Login</a></li>
-                            <li>
-                                <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Join Marketplace</a>
-                            </li>
-                    }
-                </ul>
+                        else
+                        {
+                            <li><a class="btn btn-light btn-sm" asp-controller="Account"
+                                    asp-action="Login">Autentificare</a></li>
+                        }
+                    </ul>
+                </div>
             </div>
         </nav>
     </header>
@@ -68,7 +81,7 @@
     <footer class="footer-minimal">
         <div class="container text-center">
             <p class="text-muted mb-0" style="font-size: 0.875rem;">
-                &copy; 2026 🛒 Marketplace | <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                &copy; 2026 @settings.SiteName
             </p>
         </div>
     </footer>
@@ -78,4 +91,5 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
