@@ -13,6 +13,9 @@ namespace Marketplace.BusinessLogic.Builders
         IProductBuilder SetStock(int stock);
         IProductBuilder SetPhysicalDetails(decimal weight, decimal shippingCost);
         IProductBuilder SetDigitalDetails(string downloadUrl, string fileFormat);
+        IProductBuilder SetImageUrl(string imageUrl);
+        IProductBuilder SetUserId(int userId);
+        IProductBuilder SetIsDigital(bool isDigital);
         Product Build();
     }
 }

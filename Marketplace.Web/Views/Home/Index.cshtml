@@ -1,10 +1,9 @@
-﻿@model IEnumerable<Marketplace.Domain.Entities.Product>
+﻿@using Marketplace.BusinessLogic.Singletons
 @{
     ViewData["Title"] = "Marketplace";
     var currentCategory = ViewBag.CurrentCategory as string;
     var currentSearch = ViewBag.CurrentSearch as string;
-
-
+    var settings = MarketplaceSettings.Instance;
 }
 
 <div class="container mt-4">
@@ -63,7 +62,7 @@
                                 <h3 class="product-title">@item.Name</h3>
                                 <p class="product-desc">@(item.Description ?? "Fără descriere disponibilă.")</p>
                                 <div class="card-footer-premium">
-                                    <div class="price-tag">@((item.Price ?? 0).ToString("N0")) MDL</div>
+                                    <div class="price-tag">@((item.Price ?? 0).ToString("N0")) @settings.DefaultCurrency</div>
                                     <a asp-controller="Product" asp-action="Checkout" asp-route-id="@item.Id"
                                         class="btn-buy-premium text-decoration-none">Cumpără</a>
                                 </div>

@@ -37,7 +37,7 @@ namespace Marketplace.Tests
 
             // Assert
             Assert.NotSame(original, clone);
-            Assert.Equal(original.Name, clone.Name);
+            Assert.Equal("Copie a " + original.Name, clone.Name);
             Assert.Equal(original.Price, clone.Price);
             Assert.Equal(original.Category, clone.Category);
         }
@@ -76,7 +76,45 @@ namespace Marketplace.Tests
             // Assert
             Assert.Equal("Premium Laptop Pro", laptop.Name);
             Assert.True(ebook.IsDigital);
-            Assert.Equal("Digital", ebook.Category);
+            Assert.Equal("Produse Online", ebook.Category);
+        }
+        [Fact]
+        public void Prototype_ShouldCloneAsTemplateCorrectly()
+        {
+            // Arrange
+            var original = new Product { Name = "Original", Brand = "Red", Stock = 10, Category = "Test" };
+
+            // Act
+            var template = original.CloneAsTemplate();
+
+            // Assert
+            Assert.Equal(original.Name, template.Name); // Name should persist in template
+            Assert.Equal(0, template.Stock); // Stock should be reset
+            Assert.Equal(original.Category, template.Category);
+            Assert.Equal(0, template.Id);
+        }
+
+        [Fact]
+        public void Director_ShouldConstructNewSpecializedProducts()
+        {
+            // Arrange
+            var builder = new ProductBuilder();
+            var director = new ProductDirector();
+
+            // Act
+            var phone = director.ConstructSmartphone(builder);
+            var course = director.ConstructCourse(builder);
+            var chair = director.ConstructFurniture(builder);
+
+            // Assert
+            Assert.Equal("Smartphone NextGen X", phone.Name);
+            Assert.False(phone.IsDigital);
+
+            Assert.Equal("FullStack Web Development", course.Name);
+            Assert.True(course.IsDigital);
+
+            Assert.Equal("Minimalist Ergonomic Chair", chair.Name);
+            Assert.Equal("Interior", chair.Category);
         }
     }
 }

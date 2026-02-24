@@ -24,6 +24,10 @@ builder.Services.AddAuthentication("CookieAuth")
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
 
+// Initialize Singleton from configuration
+builder.Configuration.GetSection("MarketplaceSettings").Bind(Marketplace.BusinessLogic.Singletons.MarketplaceSettings.Instance);
+Marketplace.BusinessLogic.Singletons.MarketplaceSettings.Instance.Validate();
+
 var app = builder.Build();
 
 

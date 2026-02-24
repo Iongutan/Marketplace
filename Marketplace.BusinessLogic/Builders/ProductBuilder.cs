@@ -55,6 +55,10 @@ namespace Marketplace.BusinessLogic.Builders
                 physical.Weight = weight;
                 physical.ShippingCost = shippingCost;
             }
+            else
+            {
+                throw new InvalidOperationException("SetPhysicalDetails poate fi apelat doar după Reset(isDigital: false)");
+            }
             return this;
         }
 
@@ -65,6 +69,28 @@ namespace Marketplace.BusinessLogic.Builders
                 digital.DownloadUrl = downloadUrl;
                 digital.FileFormat = fileFormat;
             }
+            else
+            {
+                throw new InvalidOperationException("SetDigitalDetails poate fi apelat doar după Reset(isDigital: true)");
+            }
+            return this;
+        }
+
+        public IProductBuilder SetImageUrl(string imageUrl)
+        {
+            _product.ImageUrl = imageUrl;
+            return this;
+        }
+
+        public IProductBuilder SetUserId(int userId)
+        {
+            _product.UserId = userId;
+            return this;
+        }
+
+        public IProductBuilder SetIsDigital(bool isDigital)
+        {
+            _product.IsDigital = isDigital;
             return this;
         }
 

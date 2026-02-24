@@ -18,7 +18,21 @@ namespace Marketplace.Domain.Entities
 
         public Product Clone()
         {
-            return (Product)this.MemberwiseClone();
+            var clone = (Product)this.MemberwiseClone();
+            clone.Id = 0;
+            clone.CreatedDate = DateTime.Now;
+            clone.Name = "Copie a " + this.Name;
+            return clone;
+        }
+
+        public Product CloneAsTemplate()
+        {
+            var clone = (Product)this.MemberwiseClone();
+            clone.Id = 0;
+            clone.CreatedDate = DateTime.Now;
+            clone.Stock = 0;
+            // Name remains original
+            return clone;
         }
 
         public override string GetEntityDetails()

@@ -64,10 +64,13 @@
                             <h3 class="product-title">@item.Name</h3>
                             <p class="product-desc">@(item.Description ?? "Fără descriere.")</p>
                             <div class="card-footer-premium">
-                                <div class="price-tag">@((item.Price ?? 0).ToString("N0")) MDL</div>
+                                <div class="price-tag">@((item.Price ?? 0).ToString("N0"))
+                                    @Marketplace.BusinessLogic.Singletons.MarketplaceSettings.Instance.DefaultCurrency</div>
                                 <div class="btn-group">
                                     <a asp-action="Edit" asp-route-id="@item.Id"
                                         class="btn btn-outline-primary btn-sm">Editează</a>
+                                    <a asp-action="Duplicate" asp-route-id="@item.Id"
+                                        class="btn btn-outline-secondary btn-sm">Duplică</a>
                                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-light btn-sm text-danger"
                                         onclick="return confirm('Ești sigur că vrei să ștergi acest produs?')">Șterge</a>
                                 </div>

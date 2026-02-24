@@ -13,7 +13,8 @@ namespace Marketplace.BusinessLogic.Factories
                 Price = price,
                 Stock = stock,
                 DownloadUrl = "http://example.com/download", // Default
-                FileFormat = "PDF"
+                FileFormat = "PDF",
+                IsDigital = true
             };
         }
     }

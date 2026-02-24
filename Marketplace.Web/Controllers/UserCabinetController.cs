@@ -42,20 +42,20 @@ namespace Marketplace.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                // Standardize with Factory Method pattern
-                Marketplace.BusinessLogic.Factories.ProductFactory factory;
-                if (product.IsDigital == true)
-                    factory = new Marketplace.BusinessLogic.Factories.DigitalProductFactory();
-                else
-                    factory = new Marketplace.BusinessLogic.Factories.PhysicalProductFactory();
+                // Standardization using Builder pattern
+                var builder = new Marketplace.BusinessLogic.Builders.ProductBuilder();
 
-                var newProduct = factory.CreateProduct(product.Name ?? "Unnamed", product.Price ?? 0, product.Stock ?? 0);
-                newProduct.Description = product.Description;
-                newProduct.Brand = product.Brand;
-                newProduct.Category = product.Category;
-                newProduct.ImageUrl = await SaveImage(ImageFile) ?? product.ImageUrl;
-                newProduct.IsDigital = product.IsDigital;
-                newProduct.UserId = GetUserId();
+                var newProduct = builder.Reset(product.IsDigital ?? false)
+                                        .SetName(product.Name ?? "Unnamed")
+                                        .SetPrice(product.Price ?? 0)
+                                        .SetStock(product.Stock ?? 0)
+                                        .SetDescription(product.Description ?? "")
+                                        .SetBrand(product.Brand ?? "")
+                                        .SetCategory(product.Category ?? "")
+                                        .SetImageUrl(await SaveImage(ImageFile) ?? product.ImageUrl ?? "")
+                                        .SetUserId(GetUserId())
+                                        .Build();
+
                 newProduct.CreatedDate = System.DateTime.Now;
 
                 _productService.AddProduct(newProduct);
@@ -112,6 +112,19 @@ namespace Marketplace.Web.Controllers
                 return Unauthorized();
             }
             _productService.DeleteProduct(id);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Duplicate(int id)
+        {
+            var original = _productService.GetProductById(id);
+            if (original == null || original.UserId != GetUserId())
+            {
+                return Unauthorized();
+            }
+
+            var clone = original.Clone();
+            _productService.AddProduct(clone);
             return RedirectToAction("Index");
         }
 

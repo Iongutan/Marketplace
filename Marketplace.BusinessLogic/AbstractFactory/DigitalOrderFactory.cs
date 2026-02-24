@@ -10,8 +10,13 @@ namespace Marketplace.BusinessLogic.AbstractFactory
             Console.WriteLine($"[Digital] Sending download link via Email.");
         }
     }
-
-
+    public class OnlinePayment : IPaymentMethod
+    {
+        public void ProcessPayment(decimal amount)
+        {
+            Console.WriteLine($"[Digital] Processing online payment of {amount:C}");
+        }
+    }
 
     // Concrete Factory 2
     public class DigitalOrderFactory : IOrderFactory
@@ -23,7 +28,7 @@ namespace Marketplace.BusinessLogic.AbstractFactory
 
         public IPaymentMethod CreatePaymentMethod()
         {
-            return new CardPayment(); // Changed from PayPal to Card as requested
+            return new OnlinePayment();
         }
     }
 }

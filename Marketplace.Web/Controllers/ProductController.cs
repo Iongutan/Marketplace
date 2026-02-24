@@ -76,26 +76,25 @@ namespace Marketplace.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                // Use Factory Method
-                Marketplace.BusinessLogic.Factories.ProductFactory factory;
+                // Use Builder pattern for centralized creation
+                var builder = new Marketplace.BusinessLogic.Builders.ProductBuilder();
                 bool digitalValue = isDigital ?? product.IsDigital ?? false;
 
-                if (digitalValue)
-                    factory = new Marketplace.BusinessLogic.Factories.DigitalProductFactory();
-                else
-                    factory = new Marketplace.BusinessLogic.Factories.PhysicalProductFactory();
-
-                var newProduct = factory.CreateProduct(product.Name ?? "Unnamed", product.Price ?? 0, product.Stock ?? 0);
-                newProduct.Description = product.Description;
-                newProduct.Brand = product.Brand;
-                newProduct.Category = product.Category;
-                newProduct.ImageUrl = await SaveImage(ImageFile) ?? product.ImageUrl;
-                newProduct.IsDigital = digitalValue;
-
-                // Get current user ID
                 var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-                newProduct.UserId = claim != null ? int.Parse(claim.Value) : 0;
-                newProduct.CreatedDate = System.DateTime.Now;
+                int currentUserId = claim != null ? int.Parse(claim.Value) : 0;
+
+                var newProduct = builder.Reset(digitalValue)
+                                        .SetName(product.Name ?? "Unnamed")
+                                        .SetPrice(product.Price ?? 0)
+                                        .SetStock(product.Stock ?? 0)
+                                        .SetDescription(product.Description ?? "")
+                                        .SetBrand(product.Brand ?? "")
+                                        .SetCategory(product.Category ?? "")
+                                        .SetImageUrl(await SaveImage(ImageFile) ?? product.ImageUrl ?? "")
+                                        .SetUserId(currentUserId)
+                                        .Build();
+
+                newProduct.CreatedDate = System.DateTime.Now; // Final stamp
 
                 _productService.AddProduct(newProduct);
                 return RedirectToAction("Index");
@@ -142,8 +141,6 @@ namespace Marketplace.Web.Controllers
             if (original == null) return NotFound();
 
             var clone = original.Clone();
-            clone.Id = 0; // Reset Id for EF to treat as new entity
-            clone.Name = "Copie a " + original.Name;
 
             _productService.AddProduct(clone);
             return RedirectToAction("Index");

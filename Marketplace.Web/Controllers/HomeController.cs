@@ -17,7 +17,9 @@ public class HomeController : Controller
 
     public IActionResult Index(string? category, string? brand, string? search)
     {
-        var products = _productService.GetProducts();
+        var settings = Marketplace.BusinessLogic.Singletons.MarketplaceSettings.Instance;
+        var products = _productService.GetProducts()
+                                      .Take(settings.MaxProductsPerUser); // Limit for demonstration as requested
 
         if (!string.IsNullOrEmpty(category))
         {

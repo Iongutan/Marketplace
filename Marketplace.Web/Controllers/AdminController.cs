@@ -68,9 +68,6 @@ namespace Marketplace.Web.Controllers
             if (original == null) return NotFound();
 
             var clone = original.Clone();
-            clone.Id = 0;
-            clone.Name = "Copie a " + original.Name;
-            clone.CreatedDate = System.DateTime.Now;
 
             _productService.AddProduct(clone);
             return RedirectToAction("Dashboard");
@@ -78,20 +75,40 @@ namespace Marketplace.Web.Controllers
 
         public IActionResult QuickCreate(string type)
         {
-            var builder = new Marketplace.BusinessLogic.Builders.ProductBuilder();
-            var director = new Marketplace.BusinessLogic.Builders.ProductDirector();
+            // Prototype Pattern: Try to find an existing product to use as a template
+            string category = type == "Laptop" ? "Produse Electronice" : "Produse Online";
+            var template = _productService.GetProducts()
+                                          .FirstOrDefault(p => p.Category == category);
+
             Product product;
-
-            if (type == "Laptop")
-                product = director.ConstructLaptop(builder);
-            else if (type == "EBook")
-                product = director.ConstructEBook(builder);
+            if (template != null)
+            {
+                // Use Prototype
+                product = template.CloneAsTemplate();
+                // Optionally adjust specific fields
+                if (type == "Laptop") product.Name = "Premium Laptop Pro (Template)";
+                else product.Name = "Mastering Design Patterns (Template)";
+            }
             else
-                return BadRequest("Unknown product type");
+            {
+                // Fallback to Builder
+                var builder = new Marketplace.BusinessLogic.Builders.ProductBuilder();
+                var director = new Marketplace.BusinessLogic.Builders.ProductDirector();
 
-            // Ensure Admin details
+                product = (type switch
+                {
+                    "Laptop" => director.ConstructLaptop(builder),
+                    "EBook" => director.ConstructEBook(builder),
+                    "Smartphone" => director.ConstructSmartphone(builder),
+                    "Course" => director.ConstructCourse(builder),
+                    "Furniture" => director.ConstructFurniture(builder),
+                    _ => null
+                })!;
+
+                if (product == null) return BadRequest("Unknown product type");
+            }
+
             product.CreatedDate = System.DateTime.Now;
-
             _productService.AddProduct(product);
             return RedirectToAction("Dashboard");
         }
