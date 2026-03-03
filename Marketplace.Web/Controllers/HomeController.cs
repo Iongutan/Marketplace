@@ -23,17 +23,17 @@ public class HomeController : Controller
 
         if (!string.IsNullOrEmpty(category))
         {
-            if (category == "Produse Online")
+            if (category == "Produse Digitale")
             {
-                products = products.Where(p => p.Category == "Produse Online" || p.Category == "Software" || p.IsDigital == true);
+                products = products.Where(p => p.IsDigital == true);
             }
-            else if (category == "Produse Electronice")
+            else if (category == "Produse Fizice")
             {
-                products = products.Where(p => p.Category == "Produse Electronice" || p.Category == "Electronice" || p.Category == "Electronics");
+                products = products.Where(p => p.IsDigital == false);
             }
             else if (category == "Interior")
             {
-                products = products.Where(p => p.Category == "Interior" || p.Category == "Mobilă" || p.Category == "Produse Fizice");
+                products = products.Where(p => p.Category == "Interior" || p.Category == "Mobilă");
             }
             else
             {

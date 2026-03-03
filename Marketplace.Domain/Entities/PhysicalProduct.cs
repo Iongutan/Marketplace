@@ -4,7 +4,7 @@ namespace Marketplace.Domain.Entities
 {
     public class PhysicalProduct : Product
     {
-        public new string GetEntityDetails()
+        public override string GetEntityDetails()
         {
             return $"Physical Product: {Name} - Price: {Price:C} (Stock: {Stock}) - Shipping: {ShippingCost:C}";
         }

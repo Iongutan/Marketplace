@@ -7,7 +7,7 @@
     var settings = MarketplaceSettings.Instance;
 
     var categories = new[] {
-"Produse Fizice", "Produse Online", "Electronice", "Servicii"
+"Produse Fizice", "Produse Digitale", "Servicii"
 };
 }
 
@@ -33,15 +33,15 @@
 
                 @if (User.IsInRole("Admin"))
                 {
-                        <div class="card-minimal p-4 border-primary border-opacity-25 bg-primary bg-opacity-5">
-                            <h6 class="fw-bold mb-3">Acțiuni Admin</h6>
-                            <div class="d-grid gap-2">
-                                <a asp-action="QuickCreate" asp-route-type="Laptop" class="btn btn-primary btn-sm">Creare Rapidă
-                                    Laptop</a>
-                                <a asp-action="QuickCreate" asp-route-type="EBook" class="btn btn-primary btn-sm">Creare Rapidă
-                                    E-Book</a>
-                            </div>
+                    <div class="card-minimal p-4 border-primary border-opacity-25 bg-primary bg-opacity-5">
+                        <h6 class="fw-bold mb-3">Acțiuni Admin</h6>
+                        <div class="d-grid gap-2">
+                            <a asp-action="QuickCreate" asp-route-type="Laptop" class="btn btn-primary btn-sm">Creare Rapidă
+                                Laptop</a>
+                            <a asp-action="QuickCreate" asp-route-type="EBook" class="btn btn-primary btn-sm">Creare Rapidă
+                                E-Book</a>
                         </div>
+                    </div>
                 }
             </div>
         </aside>
@@ -55,68 +55,68 @@
                     </h1>
                     @if (!string.IsNullOrEmpty(currentSearch))
                     {
-                            <p class="text-muted">Rezultate pentru: <span class="text-main fw-bold">"@currentSearch"</span></p>
+                        <p class="text-muted">Rezultate pentru: <span class="text-main fw-bold">"@currentSearch"</span></p>
                     }
                 </div>
                 <div class="text-muted fs-6">
-                    @Model.Count() produse găsite
+                    @Model.Count produse găsite
                 </div>
             </div>
 
             @if (!Model.Any())
             {
-                    <div class="empty-state animate-fade-in">
-                        <h3 class="fw-bold mb-2">Niciun produs găsit</h3>
-                        <p class="text-muted mb-4">Încearcă să schimbi filtrele sau să cauți altceva.</p>
-                        <a asp-action="Index" class="btn btn-primary">Resetează Filtrele</a>
-                    </div>
+                <div class="empty-state animate-fade-in">
+                    <h3 class="fw-bold mb-2">Niciun produs găsit</h3>
+                    <p class="text-muted mb-4">Încearcă să schimbi filtrele sau să cauți altceva.</p>
+                    <a asp-action="Index" class="btn btn-primary">Resetează Filtrele</a>
+                </div>
             }
             else
             {
-                    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-3 animate-fade-in">
+                <div class="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3">
                     @foreach (var item in Model)
                     {
-                                <div class="col">
-                                    <div class="product-card-premium">
-                                        <div class="image-container">
+                        <div class="col">
+                            <div class="product-card-premium">
+                                <div class="image-container">
                                     @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
                                     {
-                                                    <img src="@item.ImageUrl" alt="@item.Name"
-                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="w-100 h-100 d-none align-items-center justify-content-center bg-light">
-                                                        <span class="opacity-10 display-1 fw-bold">M</span>
-                                                    </div>
+                                        <img src="@item.ImageUrl" alt="@item.Name"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="w-100 h-100 d-none align-items-center justify-content-center bg-light">
+                                            <span class="opacity-10 display-1 fw-bold">M</span>
+                                        </div>
                                     }
                                     else
                                     {
-                                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                                                        <span class="opacity-10 display-1 fw-bold">M</span>
-                                                    </div>
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                            <span class="opacity-10 display-1 fw-bold">M</span>
+                                        </div>
                                     }
-                                            <div class="badges-overlay">
+                                    <div class="badges-overlay">
                                         @if (item.IsDigital == true)
                                         {
-                                                        <span class="badge-premium badge-online">Online</span>
+                                            <span class="badge-premium badge-online">Digital</span>
                                         }
                                         @if (User.Identity?.IsAuthenticated == true)
                                         {
-                                                        <a asp-action="Duplicate" asp-route-id="@item.Id"
-                                                            class="badge-premium badge-clone text-decoration-none">Clonează</a>
+                                            <a asp-action="Duplicate" asp-route-id="@item.Id"
+                                                class="badge-premium badge-clone text-decoration-none">Clonează</a>
                                         }
-                                            </div>
-                                        </div>
-                                        <div class="brand-name">@(item.Brand ?? "MARKETPLACE")</div>
-                                        <h3 class="product-title">@item.Name</h3>
-                                        <p class="product-desc">@(item.Description ?? "Fără descriere disponibilă.")</p>
-                                        <div class="card-footer-premium">
-                                            <div class="price-tag">@((item.Price ?? 0).ToString("N0")) @settings.DefaultCurrency</div>
-                                            <a asp-action="Checkout" asp-route-id="@item.Id"
-                                                class="btn-buy-premium text-decoration-none">Cumpără</a>
-                                        </div>
                                     </div>
                                 </div>
+                                <div class="brand-name">@(item.Brand ?? "MARKETPLACE")</div>
+                                <h3 class="product-title">@item.Name</h3>
+                                <p class="product-desc">@(item.Description ?? "Fără descriere disponibilă.")</p>
+                                <div class="card-footer-premium">
+                                    <div class="price-tag">@((item.Price ?? 0).ToString("N0")) @settings.DefaultCurrency</div>
+                                    <a asp-action="Checkout" asp-route-id="@item.Id"
+                                        class="btn-buy-premium text-decoration-none">Cumpără</a>
+                                </div>
+                            </div>
+                        </div>
                     }
-                    </div>
+                </div>
             }
         </main>
     </div>
@@ -124,16 +124,16 @@
 
 @section Scripts {
 
-        <style>
-            .text-truncate-2 {
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-            }
+    <style>
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
-            .letter-spacing-wide {
-                letter-spacing: 0.1em;
-            }
-        </style>
+        .letter-spacing-wide {
+            letter-spacing: 0.1em;
+        }
+    </style>
 }

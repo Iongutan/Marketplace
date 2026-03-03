@@ -1,0 +1,132 @@
+@model Marketplace.BusinessLogic.Facade.OrderResult
+@using Marketplace.BusinessLogic.Singletons
+@{
+    ViewData["Title"] = "Comandă confirmată";
+    var settings = MarketplaceSettings.Instance;
+}
+
+<style>
+    .confirm-card-premium {
+        background: #fff;
+        border-radius: 1.5rem;
+        padding: 3rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+    }
+
+    .success-icon-minimal {
+        width: 80px;
+        height: 80px;
+        background: #f0fdf4;
+        color: #16a34a;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 2rem;
+        border: 2px solid #dcfce7;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-key {
+        color: var(--text-muted);
+        font-size: 0.9375rem;
+        font-weight: 500;
+    }
+
+    .detail-val {
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    .facade-info-box {
+        background: var(--bg-alt);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="confirm-card-premium text-center">
+            <div class="success-icon-minimal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                    class="bi bi-check-lg" viewBox="0 0 16 16">
+                    <path
+                        d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z" />
+                </svg>
+            </div>
+            <h2 class="fw-bold mb-2">Comandă Plasată!</h2>
+            <p class="text-muted mb-5">Confirmarea a fost trimisă pe adresa dvs. de email.</p>
+
+            <div class="text-start mb-4">
+                <div class="detail-item">
+                    <span class="detail-key">Număr Comandă</span>
+                    <span class="detail-val text-primary">#@Model.OrderNumber</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-key">Produs</span>
+                    <span class="detail-val">@Model.ProductName</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-key">Total Plătit</span>
+                    <span class="detail-val h5 mb-0 fw-bold">@Model.TotalAmount.ToString("N0")
+                        @settings.DefaultCurrency</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-key">Metodă Plată</span>
+                    <span class="detail-val">@Model.PaymentGateway</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-key">Status Livrare</span>
+                    <span class="detail-val">
+                        @if (Model.IsDigital)
+                        {
+                            <span class="badge-premium badge-online">Digital — Email</span>
+                        }
+                        else
+                        {
+                            <span class="badge-premium badge-clone">Fizic — Curier</span>
+                        }
+                    </span>
+                </div>
+            </div>
+
+            <div class="facade-info-box text-start">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge-premium badge-clone" style="font-size: 0.65rem;">Façade Pattern</span>
+                    <strong class="small text-uppercase fw-bold">Orchestrare Automată</strong>
+                </div>
+                <p class="mb-0 small text-muted lh-base">
+                    <code>OrderFacade</code> a coordonat în fundal:
+                    Stock &rarr; Payment &rarr; Registration &rarr; Notifications.
+                </p>
+            </div>
+
+            <div class="mt-5 d-flex gap-3 justify-content-center">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-5 py-3">
+                    Înapoi la Marketplace
+                </a>
+                <a asp-controller="UserCabinet" asp-action="Index" class="btn btn-outline px-5 py-3">
+                    Comenzile Mele
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>

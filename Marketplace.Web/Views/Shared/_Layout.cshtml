@@ -51,6 +51,7 @@
                     </a>
 
                     <ul class="nav-links m-0 p-0 d-none d-lg-flex">
+                        <li><a class="nav-link-minimal" asp-controller="Catalog" asp-action="Index">Catalog</a></li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             @if (User.IsInRole("Admin"))

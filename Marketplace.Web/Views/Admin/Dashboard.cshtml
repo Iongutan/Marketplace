@@ -4,18 +4,26 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
+<style>
+    /* Expand container just for this page */
+    @@media (min-width: 1200px) {
+        .container { max-width: 95% !important; transition: max-width 0.3s ease; }
+    }
+    .table-compact td, .table-compact th { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+</style>
+
 <div class="row g-4">
-    <aside class="col-md-3">
+    <aside class="col-md-2">
         @await Html.PartialAsync("_CategorySidebar")
     </aside>
 
-    <main class="col-md-9">
+    <main class="col-md-10">
         <div class="mb-5 d-flex justify-content-between align-items-end">
             <div>
                 <h1 class="display-5 fw-bold mb-1">Admin Dashboard</h1>
-                <p class="text-muted">Supraveghere globală a tuturor anunțurilor și activității utilizatorilor.</p>
+                <p class="text-muted small">Supraveghere globală a tuturor anunțurilor și activității utilizatorilor.</p>
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 mb-1">
                 <a asp-action="QuickCreate" asp-route-type="Laptop"
                     class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
                     + Laptop Rapid
@@ -29,14 +37,14 @@
 
         <div class="card card-minimal shadow-sm border-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-hover align-middle mb-0 table-compact">
                     <thead>
                         <tr class="bg-alt">
-                            <th class="ps-4 py-3 text-uppercase small fw-bold text-muted">Produs</th>
+                            <th class="ps-4 py-3 text-uppercase small fw-bold text-muted">Produs & Brand</th>
+                            <th class="py-3 text-uppercase small fw-bold text-muted text-center">Tip</th>
                             <th class="py-3 text-uppercase small fw-bold text-muted">Categorie</th>
-                            <th class="py-3 text-uppercase small fw-bold text-muted">Brand</th>
                             <th class="py-3 text-uppercase small fw-bold text-muted">Preț</th>
-                            <th class="py-3 text-uppercase small fw-bold text-muted">Proprietar</th>
+                            <th class="py-3 text-uppercase small fw-bold text-muted text-center">Proprietar</th>
                             <th class="py-3 text-uppercase small fw-bold text-muted text-end pe-4">Acțiuni</th>
                         </tr>
                     </thead>
@@ -49,45 +57,45 @@
                                         @if (!string.IsNullOrEmpty(item.ImageUrl))
                                         {
                                             <img src="@item.ImageUrl" class="rounded-3 me-3"
-                                                style="width: 56px; height: 56px; object-fit: cover; border: 1px solid #f1f5f9;">
+                                                style="width: 48px; height: 48px; object-fit: cover; border: 1px solid #f1f5f9;">
                                         }
                                         else
                                         {
                                             <div class="rounded-3 me-3 bg-light d-flex align-items-center justify-content-center"
-                                                style="width: 56px; height: 56px; border: 1px solid #f1f5f9;">
-                                                <span class="text-muted fw-bold">M</span>
+                                                style="width: 48px; height: 48px; border: 1px solid #f1f5f9;">
+                                                <span class="text-muted fw-bold small">M</span>
                                             </div>
                                         }
                                         <div>
-                                            <div class="fw-bold text-main fs-6">@item.Name</div>
-                                            <div class="text-muted small">Brand: @(item.Brand ?? "N/A")</div>
+                                            <div class="fw-bold text-main small mb-0">@item.Name</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">Brand: @(item.Brand ?? "N/A")</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <span
-                                        class="badge @(item.IsDigital == true ? "bg-info" : "bg-secondary") rounded-pill px-3">
-                                        @(item.IsDigital == true ? "Online" : "Fizic")
+                                        class="badge @(item.IsDigital == true ? "bg-info" : "bg-secondary") rounded-pill px-2 small" style="font-size: 0.7rem;">
+                                        @(item.IsDigital == true ? "Digital" : "Fizic")
                                     </span>
                                 </td>
                                 <td class="text-muted small">@item.Category</td>
-                                <td class="fw-bold">@((item.Price ?? 0).ToString("N0")) MDL</td>
-                                <td>
+                                <td class="fw-bold small">@((item.Price ?? 0).ToString("N0")) MDL</td>
+                                <td class="text-center">
                                     <span
-                                        class="badge bg-light text-muted border border-light-subtle rounded-pill">ID#@item.UserId</span>
+                                        class="badge bg-light text-muted border border-light-subtle rounded-pill small" style="font-size: 0.7rem;">ID#@item.UserId</span>
                                 </td>
-                                <td class="text-end pe-4">
-                                    <div class="d-flex justify-content-end gap-2">
+                                <td class="text-end pe-4 text-nowrap">
+                                    <div class="d-flex justify-content-end gap-1">
                                         <a asp-action="EditProduct" asp-route-id="@item.Id"
-                                            class="btn btn-outline-primary btn-sm px-3">
+                                            class="btn btn-outline-primary btn-xs px-2 py-1 small">
                                             Editează
                                         </a>
                                         <a asp-action="DuplicateProduct" asp-route-id="@item.Id"
-                                            class="btn btn-light btn-sm px-3">
+                                            class="btn btn-light btn-xs px-2 py-1 small">
                                             Clonează
                                         </a>
                                         <a asp-action="DeleteProduct" asp-route-id="@item.Id"
-                                            class="btn btn-light btn-sm px-3 text-danger"
+                                            class="btn btn-light btn-xs px-2 py-1 small text-danger"
                                             onclick="return confirm('Ești sigur că vrei să ștergi acest produs?')">
                                             Șterge
                                         </a>
@@ -101,6 +109,14 @@
         </div>
     </main>
 </div>
+
+<style>
+    .btn-xs {
+        font-size: 0.75rem;
+        line-height: 1.5;
+        border-radius: 0.3rem;
+    }
+</style>
 
 <style>
     .bg-alt {

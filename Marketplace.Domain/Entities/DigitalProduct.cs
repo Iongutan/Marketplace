@@ -4,7 +4,7 @@ namespace Marketplace.Domain.Entities
 {
     public class DigitalProduct : Product
     {
-        public new string GetEntityDetails()
+        public override string GetEntityDetails()
         {
             return $"Digital Product: {Name} - Price: {Price:C} (Stock: {Stock}) - Link: {DownloadUrl}";
         }

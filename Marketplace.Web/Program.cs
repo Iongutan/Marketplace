@@ -10,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// builder.Services.AddDbContext<BusinessContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("MarketplaceDb")));
+
 builder.Services.AddDbContext<BusinessContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MarketplaceDb")));
 

@@ -33,6 +33,7 @@ namespace Marketplace.BusinessLogic.Core
 
             user.Username = trimmedUsername;
             user.Email = trimmedEmail;
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password); // Secure Password Hashing
             user.CreatedDate = DateTime.Now;
 
             _userRepository.Insert(user);
@@ -46,9 +47,32 @@ namespace Marketplace.BusinessLogic.Core
             var trimmedUsername = username.Trim();
             var trimmedPassword = password.Trim();
 
-            return _userRepository.GetAll().FirstOrDefault(u =>
-                !string.IsNullOrEmpty(u.Username) && u.Username.Trim().Equals(trimmedUsername, StringComparison.OrdinalIgnoreCase) &&
-                !string.IsNullOrEmpty(u.Password) && u.Password.Trim() == trimmedPassword);
+            var user = _userRepository.GetAll().FirstOrDefault(u =>
+                !string.IsNullOrEmpty(u.Username) && u.Username.Trim().Equals(trimmedUsername, StringComparison.OrdinalIgnoreCase));
+
+            if (user != null && !string.IsNullOrEmpty(user.Password))
+            {
+                // 1. Try BCrypt validation
+                try
+                {
+                    if (user.Password.StartsWith("$2") && BCrypt.Net.BCrypt.Verify(trimmedPassword, user.Password))
+                    {
+                        return user;
+                    }
+                }
+                catch (BCrypt.Net.SaltParseException)
+                {
+                    // Fallback to plain text if salt is invalid
+                }
+
+                // 2. Fallback to plain text (for existing DB users)
+                if (user.Password.Equals(trimmedPassword))
+                {
+                    return user;
+                }
+            }
+
+            return null;
         }
     }
 }
