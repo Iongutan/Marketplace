@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.BusinessLogic.Interfaces;
+using Marketplace.BusinessLogic.Core;
 using Marketplace.Domain.Entities;
 using System.Linq;
 
@@ -10,11 +11,13 @@ namespace Marketplace.Web.Controllers
     public class AdminController : Controller
     {
         private readonly IProductService _productService;
+        private readonly UserApi _userApi;
         private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _webHostEnvironment;
 
-        public AdminController(IProductService productService, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment)
+        public AdminController(IProductService productService, UserApi userApi, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment)
         {
             _productService = productService;
+            _userApi = userApi;
             _webHostEnvironment = webHostEnvironment;
         }
 
@@ -69,6 +72,12 @@ namespace Marketplace.Web.Controllers
 
             var clone = original.Clone();
 
+            var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (claim != null)
+            {
+                clone.UserId = int.Parse(claim.Value);
+            }
+
             _productService.AddProduct(clone);
             return RedirectToAction("Dashboard");
         }
@@ -109,8 +118,58 @@ namespace Marketplace.Web.Controllers
             }
 
             product.CreatedDate = System.DateTime.Now;
+
+            var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (claim != null)
+            {
+                product.UserId = int.Parse(claim.Value);
+            }
+
             _productService.AddProduct(product);
             return RedirectToAction("Dashboard");
+        }
+        public IActionResult Users()
+        {
+            var users = _userApi.GetAllUsers();
+            return View(users);
+        }
+
+        public IActionResult DeleteUser(int id)
+        {
+            // 1. Delete all products belonging to this user
+            var products = _productService.GetProductsByUserId(id);
+            foreach (var p in products)
+            {
+                _productService.DeleteProduct(p.Id);
+            }
+
+            // 2. Delete the user
+            _userApi.DeleteUser(id);
+
+            return RedirectToAction("Users");
+        }
+
+        [HttpGet]
+        public IActionResult EditUser(int id)
+        {
+            var user = _userApi.GetUserById(id);
+            if (user == null) return NotFound();
+            return View(user);
+        }
+
+        [HttpPost]
+        public IActionResult EditUser(User user, string? newPassword)
+        {
+            try
+            {
+                _userApi.UpdateUser(user, newPassword);
+                return RedirectToAction("Users");
+            }
+            catch (System.Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(user);
+            }
         }
     }
 }

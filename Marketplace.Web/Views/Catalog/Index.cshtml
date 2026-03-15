@@ -11,7 +11,7 @@
             <h1 class="fw-bold mb-1">@Model.Name</h1>
             <p class="text-muted">@Model.Description</p>
         </div>
-        <div class="badge-premium badge-clone text-uppercase">Composite Pattern</div>
+        @* Pattern badge removed *@
     </div>
 
     @foreach (var topChild in Model.GetChildren())
@@ -21,7 +21,7 @@
             <div class="mb-5">
                 <div class="d-flex align-items-center gap-3 mb-4 pb-2 border-bottom">
                     <h2 class="h5 fw-bold m-0 text-muted text-uppercase small">@topCat.Name</h2>
-                    <span class="badge-premium badge-clone" style="font-size: 0.65rem;">@topCat.GetProductCount() Produse</span>
+                    <span class="text-muted small">@topCat.GetProductCount() Produse</span>
                 </div>
 
                 <div class="row g-4 row-cols-1 row-cols-sm-3 row-cols-md-3 mb-5">
@@ -29,24 +29,38 @@
                     {
                         <div class="col">
                             <div class="product-card-premium h-100">
-                                <div class="image-container">
-                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                                        <span class="opacity-10 display-3 fw-bold">M</span>
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@p.ProductId" class="text-decoration-none">
+                                    <div class="image-container">
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                            <span class="opacity-10 display-3 fw-bold">M</span>
+                                        </div>
+                                        <div class="badges-overlay">
+                                            @if (p.IsDigital)
+                                            {
+                                                <span class="badge-premium badge-online">Digital</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge-premium badge-clone">Fizic</span>
+                                            }
+                                        </div>
                                     </div>
-                                    <div class="badges-overlay">
-                                        @if (p.IsDigital)
-                                        {
-                                            <span class="badge-premium badge-online">Digital</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge-premium badge-clone">Fizic</span>
-                                        }
-                                    </div>
-                                </div>
+                                </a>
                                 <div class="brand-name">@(p.Brand ?? "MARKETPLACE")</div>
-                                <h4 class="product-title">@p.Name</h4>
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@p.ProductId" class="text-decoration-none">
+                                    <h4 class="product-title">@p.Name</h4>
+                                </a>
                                 <p class="product-desc">@p.Description</p>
+                                <div class="mb-3">
+                                    @if (p.Stock > 0)
+                                    {
+                                        <span class="text-success small fw-semibold"><i class="bi bi-box-seam me-1"></i>În stoc: @p.Stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger small fw-semibold"><i class="bi bi-x-circle me-1"></i>Stoc epuizat</span>
+                                    }
+                                </div>
                                 <div class="card-footer-premium">
                                     <div class="price-tag">@p.Price.ToString("N0") @settings.DefaultCurrency</div>
                                     <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@p.ProductId"

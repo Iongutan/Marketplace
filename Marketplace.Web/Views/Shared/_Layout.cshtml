@@ -56,16 +56,17 @@
                         {
                             @if (User.IsInRole("Admin"))
                             {
-                                <li><a class="nav-link-minimal text-danger" asp-controller="Admin"
-                                        asp-action="Dashboard">Admin</a></li>
+                                        <li><a class="nav-link-minimal text-danger" asp-controller="Admin"
+                                                asp-action="Dashboard">Admin</a></li>
                             }
-                            <li><a class="nav-link-minimal" asp-controller="UserCabinet" asp-action="Index">Cabinet</a></li>
-                            <li><a class="btn btn-light btn-sm" asp-controller="Account" asp-action="Logout">Ieșire</a></li>
+                                <li><a class="nav-link-minimal" asp-controller="Account" asp-action="PublicProfile" asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value">Profilul Meu</a></li>
+                                <li><a class="nav-link-minimal" asp-controller="UserCabinet" asp-action="Index">Cabinet</a></li>
+                                <li><a class="btn btn-light btn-sm" asp-controller="Account" asp-action="Logout">Ieșire</a></li>
                         }
                         else
                         {
-                            <li><a class="btn btn-light btn-sm" asp-controller="Account"
-                                    asp-action="Login">Autentificare</a></li>
+                                <li><a class="btn btn-light btn-sm" asp-controller="Account"
+                                        asp-action="Login">Autentificare</a></li>
                         }
                     </ul>
                 </div>

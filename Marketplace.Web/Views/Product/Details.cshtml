@@ -1,0 +1,122 @@
+@model Marketplace.Domain.Entities.Product
+@using Marketplace.BusinessLogic.Singletons
+@{
+    ViewData["Title"] = Model.Name;
+    var settings = MarketplaceSettings.Instance;
+}
+
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Acasă</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index" class="text-decoration-none text-muted">Catalog</a></li>
+            <li class="breadcrumb-item active text-primary fw-semibold" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-lg-6">
+            <div class="product-detail-image-wrapper p-2 bg-white rounded-4 shadow-sm overflow-hidden mb-4" style="height: 500px;">
+                @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Name" class="w-100 h-100 object-fit-cover rounded-3 transition-transform"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="w-100 h-100 d-none align-items-center justify-content-center bg-light">
+                        <span class="opacity-10 display-1 fw-bold">M</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                        <span class="opacity-10 display-1 fw-bold">M</span>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="ps-lg-4">
+                <div class="mb-2">
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 text-uppercase small fw-bold">
+                        @(Model.IsDigital == true ? "Digital" : "Fizic")
+                    </span>
+                    <span class="ms-2 text-muted small letter-spacing-wide">@(Model.Brand ?? "Marketplace Original")</span>
+                </div>
+                
+                <h1 class="display-5 fw-bold text-dark mb-3">@Model.Name</h1>
+                
+                <div class="d-flex align-items-baseline mb-4">
+                    <span class="h2 fw-bold text-primary mb-0">@((Model.Price ?? 0).ToString("N0")) @settings.DefaultCurrency</span>
+                    @if (Model.Stock > 0)
+                    {
+                        <span class="ms-3 text-success small"><i class="bi bi-check-circle-fill me-1"></i>În stoc (@Model.Stock unități)</span>
+                    }
+                    else
+                    {
+                        <span class="ms-3 text-danger small"><i class="bi bi-x-circle-fill me-1"></i>Momentan indisponibil</span>
+                    }
+                </div>
+
+                <div class="mb-5">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Descriere Produs</h5>
+                    <p class="text-secondary lh-lg fs-5 mb-4">
+                        @(string.IsNullOrWhiteSpace(Model.Description) ? "Acest produs nu are încă o descriere detaliată." : Model.Description)
+                    </p>
+                    
+                    @if (ViewBag.CreatorName != null)
+                    {
+                        <div class="d-flex align-items-center p-3 bg-light rounded-4 border-0">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Adăugat de</div>
+                                <a asp-controller="Account" asp-action="PublicProfile" asp-route-id="@ViewBag.CreatorId" class="fw-bold text-primary text-decoration-none">
+                                    @ViewBag.CreatorName <i class="bi bi-arrow-right-short"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (Model.IsDigital == true)
+                {
+                    <div class="alert alert-info border-info-subtle rounded-4 mb-5">
+                        <div class="d-flex">
+                            <div class="me-3 fs-3 text-info"><i class="bi bi-info-circle-fill"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Produs Digital</h6>
+                                <p class="small mb-0 opacity-75">Acest produs va fi livrat instant pe adresa de e-mail după confirmarea plății.</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="d-grid gap-3 d-sm-flex">
+                    <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@Model.Id" 
+                       class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm flex-grow-1 @(Model.Stock <= 0 ? "disabled" : "")">
+                       <i class="bi bi-cart-fill me-2"></i>Cumpără Acum
+                    </a>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 py-3 rounded-pill flex-grow-1 flex-sm-grow-0">
+                        Înapoi la catalog
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-detail-image-wrapper img {
+        transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .product-detail-image-wrapper:hover img {
+        transform: scale(1.03);
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        border: none;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    }
+</style>

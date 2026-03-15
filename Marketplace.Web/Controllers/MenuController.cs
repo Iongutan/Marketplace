@@ -9,7 +9,12 @@ namespace Marketplace.Web.Controllers
     /// </summary>
     public class CatalogController : Controller
     {
-        private readonly CatalogService _catalogService = new CatalogService();
+        private readonly CatalogService _catalogService;
+
+        public CatalogController(CatalogService catalogService)
+        {
+            _catalogService = catalogService;
+        }
 
         public IActionResult Index()
         {

@@ -1,3 +1,6 @@
+using System.Linq;
+using Marketplace.BusinessLogic.Interfaces;
+
 namespace Marketplace.BusinessLogic.Composite
 {
     /// <summary>
@@ -9,53 +12,71 @@ namespace Marketplace.BusinessLogic.Composite
     /// </summary>
     public class CatalogService
     {
-        /// <summary>Construiește catalogul complet al marketplace-ului.</summary>
+        private readonly IProductService _productService;
+
+        public CatalogService(IProductService productService)
+        {
+            _productService = productService;
+        }
+
+        /// <summary>Construiește catalogul complet al marketplace-ului din baza de date.</summary>
         public CatalogCategory BuildFullCatalog()
         {
-            var root = new CatalogCategory("Catalog Marketplace", "Toate produsele disponibile");
+            var root = new CatalogCategory("Catalog Marketplace", "");
 
-            // ─── Produse Fizice ──────────────────────────────────────────────────
-            var physical = new CatalogCategory("Produse Fizice", "Gadgeturi și mobilier");
+            try
+            {
+                var products = _productService.GetProducts() ?? Enumerable.Empty<Marketplace.Domain.Entities.Product>();
 
-            var laptops = new CatalogCategory("Laptopuri");
-            laptops.Add(new CatalogProduct(1, "Premium Laptop Pro", 12999m, "Dell", "Intel i7, 16GB RAM, 512GB SSD"));
-            laptops.Add(new CatalogProduct(2, "UltraBook Slim", 9499m, "Lenovo", "Intel i5, 8GB RAM, 256GB SSD"));
+                // Definim categoriile fixe
+                var physicalCategory = new CatalogCategory("Produse Fizice");
+                var digitalCategory = new CatalogCategory("Produse Digitale");
+                var interiorCategory = new CatalogCategory("Interior");
 
-            var phones = new CatalogCategory("Telefoane Mobile");
-            phones.Add(new CatalogProduct(3, "Smartphone NextGen X", 7999m, "Samsung", "AMOLED 6.7\", 256GB"));
-            phones.Add(new CatalogProduct(4, "ProPhone 15", 8999m, "Apple", "iOS, 128GB, camera 48MP"));
+                foreach (var p in products)
+                {
+                    CatalogCategory? target = null;
 
-            var furniture = new CatalogCategory("Mobilier");
-            furniture.Add(new CatalogProduct(9, "Minimalist Ergonomic Chair", 3499m, "IKEA", "Reglabil, mesh respirabil"));
-            furniture.Add(new CatalogProduct(10, "Standing Desk Pro", 4999m, "FlexiSpot", "Electrică, 140x70cm"));
+                    // 1. Digital are prioritate
+                    if (p.IsDigital == true)
+                    {
+                        target = digitalCategory;
+                    }
+                    // 2. Mapare specială pentru Interior/Mobilă
+                    else if (p.Category == "Interior" || p.Category == "Mobilă")
+                    {
+                        target = interiorCategory;
+                    }
+                    // 3. Toate celelalte fizice
+                    else if (p.IsDigital == false)
+                    {
+                        target = physicalCategory;
+                    }
 
-            physical.Add(laptops);
-            physical.Add(phones);
-            physical.Add(furniture);
+                    if (target != null)
+                    {
+                        target.Add(new CatalogProduct(
+                            id: p.Id,
+                            name: p.Name ?? "Produs fără nume",
+                            price: p.Price ?? 0m,
+                            brand: p.Brand,
+                            description: p.Description,
+                            isDigital: p.IsDigital ?? false,
+                            stock: p.Stock ?? 0
+                        ));
+                    }
+                }
 
-            // ─── Produse Digitale ────────────────────────────────────────────────
-            var digital = new CatalogCategory("Produse Digitale", "Licențe, cursuri și e-books");
-
-            var courses = new CatalogCategory("Cursuri Digitale");
-            courses.Add(new CatalogProduct(5, "FullStack Web Development", 599m, "TechAcademy",
-                                           "React + .NET + SQL", isDigital: true));
-            courses.Add(new CatalogProduct(6, "Design Patterns in C#", 399m, "CodeMaster",
-                                           "GoF patterns aplicate în .NET", isDigital: true));
-
-            var ebooks = new CatalogCategory("E-Books");
-            ebooks.Add(new CatalogProduct(7, "Mastering Design Patterns", 149m, "OReilly",
-                                          "PDF + EPUB", isDigital: true));
-            ebooks.Add(new CatalogProduct(8, "Clean Code in Depth", 129m, "Pragmatic",
-                                          "PDF", isDigital: true));
-
-            digital.Add(courses);
-            digital.Add(ebooks);
-
-            // ─── Interior & Mobilier (Legacy handled in physical) ─────────────
-
-            // ─── Asamblare catalog ───────────────────────────────────────────────
-            root.Add(physical);
-            root.Add(digital);
+                // Adăugăm categoriile doar dacă au produse
+                if (physicalCategory.GetProductCount() > 0) root.Add(physicalCategory);
+                if (digitalCategory.GetProductCount() > 0) root.Add(digitalCategory);
+                if (interiorCategory.GetProductCount() > 0) root.Add(interiorCategory);
+            }
+            catch
+            {
+                // Fallback la catalog gol în caz de eroare SQL
+                root.Add(new CatalogCategory("Eroare", "Nu s-au putut încărca produsele."));
+            }
 
             return root;
         }
@@ -64,9 +85,7 @@ namespace Marketplace.BusinessLogic.Composite
         public CatalogCategory BuildSimpleCatalog()
         {
             var cat = new CatalogCategory("Demo Catalog");
-            cat.Add(new CatalogProduct(1, "Laptop Demo", 5000m, "Dell"));
-            cat.Add(new CatalogProduct(2, "Curs .NET", 300m, "Udemy", isDigital: true));
-            cat.Add(new CatalogProduct(3, "Scaun Office", 1200m, "IKEA"));
+            cat.Add(new CatalogProduct(1, "Produs Test Database", 100m, "SQL Test", stock: 10));
             return cat;
         }
     }

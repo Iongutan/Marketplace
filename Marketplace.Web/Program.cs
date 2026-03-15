@@ -19,6 +19,7 @@ builder.Services.AddDbContext<BusinessContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IProductService, ProductApi>();
 builder.Services.AddScoped<UserApi>();
+builder.Services.AddScoped<Marketplace.BusinessLogic.Composite.CatalogService>();
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>

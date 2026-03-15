@@ -39,6 +39,40 @@ namespace Marketplace.BusinessLogic.Core
             _userRepository.Insert(user);
         }
 
+        public User? GetUserById(int id)
+        {
+            return _userRepository.GetById(id);
+        }
+
+        public IEnumerable<User> GetAllUsers()
+        {
+            return _userRepository.GetAll();
+        }
+
+        public void DeleteUser(int id)
+        {
+            _userRepository.Delete(id);
+        }
+
+        public void UpdateUser(User user, string? newPassword = null)
+        {
+            if (user == null) throw new Exception("User cannot be null");
+
+            var existing = _userRepository.GetById(user.Id);
+            if (existing == null) throw new Exception("User not found");
+
+            existing.Username = user.Username;
+            existing.Email = user.Email;
+            existing.Role = user.Role;
+
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                existing.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            }
+
+            _userRepository.Update(existing);
+        }
+
         public User? ValidateUser(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))

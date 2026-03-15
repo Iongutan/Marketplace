@@ -1,20 +1,24 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.BusinessLogic.Core;
+using Marketplace.BusinessLogic.Interfaces;
 using Marketplace.Domain.Entities;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Marketplace.Web.Controllers
 {
     public class AccountController : Controller
     {
         private readonly UserApi _userApi;
+        private readonly IProductService _productService;
 
-        public AccountController(UserApi userApi)
+        public AccountController(UserApi userApi, IProductService productService)
         {
             _userApi = userApi;
+            _productService = productService;
         }
 
         [HttpGet]
@@ -87,6 +91,17 @@ namespace Marketplace.Web.Controllers
             {
                 ViewBag.Error = "Please correct the errors in the form.";
             }
+            return View(user);
+        }
+
+        public IActionResult PublicProfile(int id)
+        {
+            var user = _userApi.GetUserById(id);
+            if (user == null) return NotFound();
+
+            var products = _productService.GetProductsByUserId(id);
+            ViewBag.Products = products;
+
             return View(user);
         }
 

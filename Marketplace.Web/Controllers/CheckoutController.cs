@@ -5,10 +5,6 @@ using Marketplace.BusinessLogic.Interfaces;
 
 namespace Marketplace.Web.Controllers
 {
-    /// <summary>
-    /// Controller demonstrând Adapter Pattern:
-    /// PayPal, Stripe și Google Pay sunt adaptate la interfața comună IPaymentGateway.
-    /// </summary>
     public class CheckoutController : Controller
     {
         private readonly IProductService _productService;
@@ -37,7 +33,6 @@ namespace Marketplace.Web.Controllers
             var product = _productService.GetProductById(productId);
             if (product == null) return NotFound();
 
-            // ── Adapter Pattern: selectăm adaptorul potrivit în funcție de gateway ──
             IPaymentGateway paymentGateway = gateway switch
             {
                 "Stripe" => new StripeAdapter(),

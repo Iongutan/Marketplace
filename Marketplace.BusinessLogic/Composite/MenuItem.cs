@@ -17,9 +17,11 @@ namespace Marketplace.BusinessLogic.Composite
         public bool IsDigital { get; }
         public int ProductId { get; }
 
+        public int Stock { get; }
+
         public CatalogProduct(int id, string name, decimal price,
                               string? brand = null, string? description = null,
-                              bool isDigital = false)
+                              bool isDigital = false, int stock = 0)
         {
             ProductId = id;
             Name = name;
@@ -27,6 +29,7 @@ namespace Marketplace.BusinessLogic.Composite
             Brand = brand;
             Description = description;
             IsDigital = isDigital;
+            Stock = stock;
         }
 
         public void Display(int depth = 0)

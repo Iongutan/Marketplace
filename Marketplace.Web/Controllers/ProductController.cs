@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.BusinessLogic.Interfaces;
+using Marketplace.BusinessLogic.Core;
 using Marketplace.Domain.Entities;
 using System.Linq;
 
@@ -9,11 +10,13 @@ namespace Marketplace.Web.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
+        private readonly UserApi _userApi;
         private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(IProductService productService, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment)
+        public ProductController(IProductService productService, UserApi userApi, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment)
         {
             _productService = productService;
+            _userApi = userApi;
             _webHostEnvironment = webHostEnvironment;
         }
 
@@ -60,6 +63,21 @@ namespace Marketplace.Web.Controllers
             return View(products);
         }
 
+        public IActionResult Details(int id)
+        {
+            var product = _productService.GetProductById(id);
+            if (product == null) return NotFound();
+
+            if (product.UserId.HasValue)
+            {
+                var user = _userApi.GetUserById(product.UserId.Value);
+                ViewBag.CreatorName = user?.Username ?? "Utilizator șters";
+                ViewBag.CreatorId = product.UserId;
+            }
+
+            return View(product);
+        }
+
         [Authorize]
         public IActionResult Create()
         {
@@ -76,7 +94,6 @@ namespace Marketplace.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                // Use Builder pattern for centralized creation
                 var builder = new Marketplace.BusinessLogic.Builders.ProductBuilder();
                 bool digitalValue = isDigital ?? product.IsDigital ?? false;
 
@@ -142,11 +159,17 @@ namespace Marketplace.Web.Controllers
 
             var clone = original.Clone();
 
+            var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (claim != null)
+            {
+                clone.UserId = int.Parse(claim.Value);
+            }
+
             _productService.AddProduct(clone);
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public IActionResult QuickCreate(string type)
         {
             var builder = new Marketplace.BusinessLogic.Builders.ProductBuilder();
@@ -159,6 +182,12 @@ namespace Marketplace.Web.Controllers
                 product = director.ConstructEBook(builder);
             else
                 return BadRequest("Unknown product type");
+
+            var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (claim != null)
+            {
+                product.UserId = int.Parse(claim.Value);
+            }
 
             _productService.AddProduct(product);
             return RedirectToAction("Index");

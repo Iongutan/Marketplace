@@ -5,15 +5,10 @@ using Marketplace.BusinessLogic.Interfaces;
 
 namespace Marketplace.Web.Controllers
 {
-    /// <summary>
-    /// Controller demonstrând Façade Pattern:
-    /// OrderFacade ascunde 4 subsisteme (Stock, Payment, Registration, Notification).
-    /// Controller-ul apelează o singură metodă în loc de 4 subsisteme separate.
-    /// </summary>
     public class OrderController : Controller
     {
         private readonly IProductService _productService;
-        private readonly OrderFacade     _orderFacade = new OrderFacade();
+        private readonly OrderFacade _orderFacade = new OrderFacade();
 
         public OrderController(IProductService productService)
         {
@@ -42,16 +37,15 @@ namespace Marketplace.Web.Controllers
                          ?? "client@marketplace.md";
             var userName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Client";
 
-            // ── Façade Pattern: O singură metodă înlocuiește 4 apeluri manuale ──
             var result = _orderFacade.PlaceOrder(
-                productId:      product.Id,
-                productName:    product.Name ?? "Produs",
-                pricePerUnit:   product.Price ?? 0m,
-                isDigital:      product.IsDigital ?? false,
-                sellerId:       product.UserId ?? 1,
-                buyerName:      userName,
-                buyerEmail:     userEmail,
-                quantity:       quantity,
+                productId: product.Id,
+                productName: product.Name ?? "Produs",
+                pricePerUnit: product.Price ?? 0m,
+                isDigital: product.IsDigital ?? false,
+                sellerId: product.UserId ?? 1,
+                buyerName: userName,
+                buyerEmail: userEmail,
+                quantity: quantity,
                 paymentGateway: paymentGateway ?? "PayPal"
             );
 

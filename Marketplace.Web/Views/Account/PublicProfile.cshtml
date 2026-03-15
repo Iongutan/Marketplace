@@ -1,0 +1,78 @@
+@model Marketplace.Domain.Entities.User
+@{
+    ViewData["Title"] = "Profil Public: " + Model.Username;
+    var products = ViewBag.Products as IEnumerable<Marketplace.Domain.Entities.Product>;
+}
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card card-minimal p-4 shadow-sm border-0 bg-white rounded-4 text-center">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-1">@Model.Username</h3>
+                <p class="text-muted small mb-3">Membru din @Model.CreatedDate.ToString("MMMM yyyy")</p>
+                
+                <div class="d-flex justify-content-center gap-2 mb-4">
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3">
+                        @Model.Role
+                    </span>
+                    <span class="badge bg-light text-muted border rounded-pill px-3">
+                        @(products?.Count() ?? 0) Anunțuri
+                    </span>
+                </div>
+                
+                <div class="border-top pt-3 text-start">
+                    <div class="small fw-bold text-muted text-uppercase mb-2">Informații Contact</div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-envelope text-primary"></i>
+                        <span class="small text-dark">@Model.Email</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <h4 class="fw-bold mb-4">Anunțurile lui @Model.Username</h4>
+            
+            @if (products != null && products.Any())
+            {
+                <div class="row g-4">
+                    @foreach (var p in products)
+                    {
+                        <div class="col-md-6">
+                            <div class="product-card-premium h-100">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@p.Id" class="text-decoration-none">
+                                    <div class="image-container">
+                                        @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                        {
+                                            <img src="@p.ImageUrl" class="w-100 h-100 object-fit-cover">
+                                        }
+                                        else
+                                        {
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                                <span class="opacity-10 display-3 fw-bold">M</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </a>
+                                <div class="p-3">
+                                    <h5 class="product-title mb-1">@p.Name</h5>
+                                    <div class="price-tag mb-0">@((p.Price ?? 0).ToString("N0")) MDL</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 bg-light rounded-4">
+                    <i class="bi bi-box-seam display-1 text-muted opacity-25 mb-3"></i>
+                    <p class="text-muted">Acest utilizator nu are niciun anunț postat încă.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

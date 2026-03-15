@@ -4,12 +4,12 @@
     var currentBrand = ViewBag.CurrentBrand as string;
 
     var categories = new[] {
-"Produse Fizice", "Produse Digitale", "Interior", "Servicii"
+"Produse Fizice", "Produse Digitale", "Interior"
 };
 }
 
-<div class="card-minimal p-4 mb-4 shadow-sm border-0 bg-white rounded-4">
-    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+<div class="card-minimal p-3 mb-4 shadow-sm border-0 bg-white rounded-4">
+    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 px-2">
         Categorii
     </h5>
     <div class="d-flex flex-column gap-1 sidebar-categories">
@@ -31,16 +31,19 @@
 <style>
     .sidebar-categories .nav-link-minimal {
         color: var(--text-muted);
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         transition: all 0.2s ease;
         display: block;
         text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .sidebar-categories .nav-link-minimal:hover {
         background-color: var(--bg-alt);
         color: var(--text-main);
-        padding-left: 1rem !important;
+        padding-left: 0.75rem !important;
     }
 
     .sidebar-categories .nav-link-minimal.active {
