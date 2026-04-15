@@ -1,0 +1,102 @@
+﻿dotnet : 
+At line:1 char:1
++ dotnet build 
+Marketplace.slnx 2>&1 | 
+Out-File "build2.txt" 
+-Encoding  ...
++ ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
+    + CategoryInfo      
+        : NotSpecified: 
+(:    String) [], 
+RemoteExc    eption
+    + 
+FullyQualifiedError    
+Id : NativeCommandErr   
+ or
+ 
+Welcome to .NET 10.0!
+---------------------
+SDK Version: 10.0.201
+
+Telemetry
+---------
+The .NET tools collect 
+usage data in order to 
+help us improve your 
+experience. It is 
+collected by Microsoft 
+and shared with the 
+community. You can 
+opt-out of telemetry by 
+setting the DOTNET_CLI_T
+ELEMETRY_OPTOUT 
+environment variable to 
+'1' or 'true' using 
+your favorite shell.
+
+Read more about .NET 
+CLI Tools telemetry: htt
+ps://aka.ms/dotnet-cli-t
+elemetry
+
+----------------
+Installed an ASP.NET 
+Core HTTPS development 
+certificate.
+To trust the 
+certificate, run 
+'dotnet dev-certs https 
+--trust'
+Learn about HTTPS: https
+://aka.ms/dotnet-https
+
+----------------
+Write your first app: ht
+tps://aka.ms/dotnet-hell
+o-world
+Find out what's new: htt
+ps://aka.ms/dotnet-whats
+-new
+Explore documentation: h
+ttps://aka.ms/dotnet-doc
+s
+Report issues and find 
+source on GitHub: https:
+//github.com/dotnet/core
+Use 'dotnet --help' to 
+see available commands 
+or visit: https://aka.ms
+/dotnet-cli
+------------------------
+------------------------
+------------------------
+--------------
+  Determining projects to restore...
+  Restored C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Marketplace.Domain.csproj (in 206 ms).
+  Restored C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Marketplace.Data.csproj (in 621 ms).
+  Restored C:\Users\Joi\Desktop\marketplace\Marketplace.BusinessLogic\Marketplace.BusinessLogic.csproj (in 621 ms).
+  Restored C:\Users\Joi\Desktop\marketplace\Marketplace.Web\Marketplace.Web.csproj (in 691 ms).
+C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Entities\DigitalProduct.cs(12,23): warning CS8618: Non-nullable property 'DownloadUrl' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Marketplace.Domain.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Entities\DigitalProduct.cs(13,23): warning CS8618: Non-nullable property 'FileFormat' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Marketplace.Domain.csproj]
+  Marketplace.Domain -> C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\bin\Debug\net10.0\Marketplace.Domain.dll
+C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Implementations\GenericRepository.cs(27,20): warning CS8603: Possible null reference return. [C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Marketplace.Data.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Implementations\GenericRepository.cs(45,26): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Marketplace.Data.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Implementations\GenericRepository.cs(46,26): warning CS8604: Possible null reference argument for parameter 'entity' in 'EntityEntry<T> DbSet<T>.Remove(T entity)'. [C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Marketplace.Data.csproj]
+  Marketplace.Data -> C:\Users\Joi\Desktop\marketplace\Marketplace.Data\bin\Debug\net10.0\Marketplace.Data.dll
+  Marketplace.BusinessLogic -> C:\Users\Joi\Desktop\marketplace\Marketplace.BusinessLogic\bin\Debug\net10.0\Marketplace.BusinessLogic.dll
+C:\Users\Joi\Desktop\marketplace\Marketplace.Web\Views\Admin\Users.cshtml(93,63): warning CS8602: Dereference of a possibly null reference. [C:\Users\Joi\Desktop\marketplace\Marketplace.Web\Marketplace.Web.csproj]
+  Marketplace.Web -> C:\Users\Joi\Desktop\marketplace\Marketplace.Web\bin\Debug\net10.0\Marketplace.Web.dll
+
+Build succeeded.
+
+C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Entities\DigitalProduct.cs(12,23): warning CS8618: Non-nullable property 'DownloadUrl' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Marketplace.Domain.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Entities\DigitalProduct.cs(13,23): warning CS8618: Non-nullable property 'FileFormat' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\Marketplace.Domain.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Implementations\GenericRepository.cs(27,20): warning CS8603: Possible null reference return. [C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Marketplace.Data.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Implementations\GenericRepository.cs(45,26): warning CS8600: Converting null literal or possible null value to non-nullable type. [C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Marketplace.Data.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Implementations\GenericRepository.cs(46,26): warning CS8604: Possible null reference argument for parameter 'entity' in 'EntityEntry<T> DbSet<T>.Remove(T entity)'. [C:\Users\Joi\Desktop\marketplace\Marketplace.Data\Marketplace.Data.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Web\Views\Admin\Users.cshtml(93,63): warning CS8602: Dereference of a possibly null reference. [C:\Users\Joi\Desktop\marketplace\Marketplace.Web\Marketplace.Web.csproj]
+    6 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:21.45

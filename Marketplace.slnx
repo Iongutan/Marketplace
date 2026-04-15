@@ -1,6 +1,9 @@
 <Solution>
   <Project Path="Marketplace.BusinessLogic/Marketplace.BusinessLogic.csproj" />
   <Project Path="Marketplace.Data/Marketplace.Data.csproj" />
+  <Project Path="Marketplace.DesignPatterns.Demo/Marketplace.DesignPatterns.Demo.csproj" />
   <Project Path="Marketplace.Domain/Marketplace.Domain.csproj" />
+  <Project Path="Marketplace.Tests/Marketplace.Tests.csproj" />
   <Project Path="Marketplace.Web/Marketplace.Web.csproj" />
+  <Project Path="MauiApp1/MauiApp1.csproj" />
 </Solution>

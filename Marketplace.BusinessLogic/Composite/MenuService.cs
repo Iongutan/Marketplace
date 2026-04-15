@@ -86,6 +86,8 @@ namespace Marketplace.BusinessLogic.Composite
         {
             var cat = new CatalogCategory("Demo Catalog");
             cat.Add(new CatalogProduct(1, "Produs Test Database", 100m, "SQL Test", stock: 10));
+            cat.Add(new CatalogProduct(2, "Produs Test 2", 200m, "SQL Test", stock: 20));
+            cat.Add(new CatalogProduct(3, "Produs Test 3", 300m, "SQL Test", stock: 30));
             return cat;
         }
     }

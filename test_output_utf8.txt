@@ -1,0 +1,7 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Marketplace.Domain -> C:\Users\Joi\Desktop\marketplace\Marketplace.Domain\bin\Debug\net10.0\Marketplace.Domain.dll
+  Marketplace.Data -> C:\Users\Joi\Desktop\marketplace\Marketplace.Data\bin\Debug\net10.0\Marketplace.Data.dll
+  Marketplace.BusinessLogic -> C:\Users\Joi\Desktop\marketplace\Marketplace.BusinessLogic\bin\Debug\net10.0\Marketplace.BusinessLogic.dll
+C:\Users\Joi\Desktop\marketplace\Marketplace.Tests\PatternTests.cs(228,38): error CS7036: There is no argument given that corresponds to the required parameter 'productService' of 'CatalogService.CatalogService(IProductService)' [C:\Users\Joi\Desktop\marketplace\Marketplace.Tests\Marketplace.Tests.csproj]
+C:\Users\Joi\Desktop\marketplace\Marketplace.Tests\PatternTests.cs(269,38): error CS7036: There is no argument given that corresponds to the required parameter 'productService' of 'CatalogService.CatalogService(IProductService)' [C:\Users\Joi\Desktop\marketplace\Marketplace.Tests\Marketplace.Tests.csproj]
