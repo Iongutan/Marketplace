@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "Suport Tehnic";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        <!-- Hero -->
+        <div class="text-center mb-5 mt-4">
+            <h1 class="fw-bold mb-2">Suport Tehnic</h1>
+            <p class="text-muted">Trimiteți o cerere și echipa noastră vă va ajuta cât mai rapid.</p>
+        </div>
+
+
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <!-- Form -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form id="supportForm" asp-controller="Support" asp-action="Submit" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Numele dvs. *</label>
+                        <input type="text" name="customerName" id="customerName" class="form-control form-control-lg"
+                               placeholder="Ex: Ion Ionescu" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Subiectul cererii *</label>
+                        <input type="text" name="subject" id="subject" class="form-control form-control-lg"
+                               placeholder="Ex: Problemă cu livrarea, Problemă de plată..." required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Descriere detaliată</label>
+                        <textarea name="description" id="description" class="form-control" rows="4"
+                                  placeholder="Descrieți problema cu cât mai multe detalii..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Departamentul dorit</label>
+                        <div class="d-flex gap-3 flex-wrap" id="priorityGroup">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" id="typeDelivery" value="Delivery" checked>
+                                <label class="form-check-label" for="typeDelivery">
+                                    <span class="badge bg-primary me-1">Livrare</span> Întrebări despre expediere și status colet
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" id="typeReturn" value="Return">
+                                <label class="form-check-label" for="typeReturn">
+                                    <span class="badge bg-warning text-dark me-1">Retur</span> Cereri de retur și rambursare
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" id="typeStore" value="Store">
+                                <label class="form-check-label" for="typeStore">
+                                    <span class="badge bg-secondary me-1">Magazin</span> Alte probleme (cont, tehnic, general)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" id="submitSupportBtn" class="btn btn-primary btn-lg">
+                            Trimite Cererea de Suport
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

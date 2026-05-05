@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Marketplace.Domain.Entities.Product>
+@model IEnumerable<Marketplace.Domain.Entities.Product>
 @using Marketplace.BusinessLogic.Singletons
 @{
     ViewData["Title"] = "Marketplace";
@@ -64,8 +64,12 @@
                                     <h3 class="product-title">@item.Name</h3>
                                 </a>
                                 <p class="product-desc">@(item.Description ?? "Fără descriere disponibilă.")</p>
-                                <div class="card-footer-premium">
-                                    <div class="price-tag">@((item.Price ?? 0).ToString("N0")) @settings.DefaultCurrency</div>
+                                <div class="card-footer-premium d-flex gap-2">
+                                    <div class="price-tag flex-grow-1 align-self-center">@((item.Price ?? 0).ToString("N0")) @settings.DefaultCurrency</div>
+                                    <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@item.Id"
+                                        class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center" title="Adaugă în coș" style="width: 70px; height: 40px; border-radius: 5px; font-weight: bold; text-decoration: none;">
+                                        Adaugă
+                                    </a>
                                     <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@item.Id"
                                         class="btn-buy-premium text-decoration-none">Cumpără</a>
                                 </div>

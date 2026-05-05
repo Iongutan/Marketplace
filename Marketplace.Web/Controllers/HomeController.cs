@@ -18,28 +18,41 @@ public class HomeController : Controller
     public IActionResult Index(string? category, string? brand, string? search)
     {
         var settings = Marketplace.BusinessLogic.Singletons.MarketplaceSettings.Instance;
-        var products = _productService.GetProducts()
-                                      .Take(settings.MaxProductsPerUser); // Limit for demonstration as requested
+        var baseProducts = _productService.GetProducts().Take(settings.MaxProductsPerUser);
 
-        if (!string.IsNullOrEmpty(category))
+        // ==== 1. ITERATOR PATTERN (Lab 6) ====
+        var collection = new Marketplace.BusinessLogic.Iterator.ProductCollection();
+        collection.AddRange(baseProducts);
+        var filteredList = new List<Marketplace.Domain.Entities.Product>();
+
+        if (!string.IsNullOrEmpty(category) && category != "Produse Digitale" && category != "Produse Fizice" && category != "Interior")
         {
-            if (category == "Produse Digitale")
+            // Folosim Category Iterator creat la Lab 6 pentru filtrarea categoriilor reale
+            var catIterator = collection.CreateCategoryIterator(category);
+            while (catIterator.HasNext())
             {
-                products = products.Where(p => p.IsDigital == true);
-            }
-            else if (category == "Produse Fizice")
-            {
-                products = products.Where(p => p.IsDigital == false);
-            }
-            else if (category == "Interior")
-            {
-                products = products.Where(p => p.Category == "Interior" || p.Category == "Mobilă");
-            }
-            else
-            {
-                products = products.Where(p => p.Category == category);
+                filteredList.Add((Marketplace.Domain.Entities.Product)catIterator.Next());
             }
         }
+        else
+        {
+            // Folosim Normal Iterator
+            var iterator = collection.CreateIterator();
+            while (iterator.HasNext())
+            {
+                filteredList.Add((Marketplace.Domain.Entities.Product)iterator.Next());
+            }
+
+            // Aplicam filtrele manuale vechi pentru meniurile hardcodate
+            if (category == "Produse Digitale")
+                filteredList = filteredList.Where(p => p.IsDigital == true).ToList();
+            else if (category == "Produse Fizice")
+                filteredList = filteredList.Where(p => p.IsDigital == false).ToList();
+            else if (category == "Interior")
+                filteredList = filteredList.Where(p => p.Category == "Interior" || p.Category == "Mobilă").ToList();
+        }
+
+        var products = filteredList.AsEnumerable();
 
         if (!string.IsNullOrEmpty(brand))
         {

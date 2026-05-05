@@ -1,0 +1,133 @@
+@using Marketplace.BusinessLogic.Singletons
+@{
+    ViewData["Title"] = "Finalizare comandă";
+    var settings = MarketplaceSettings.Instance;
+    
+    decimal finalPrice = ViewBag.ProductPrice ?? 0m;
+    string strategyType = ViewBag.StrategyType ?? "Normal";
+    string itemsName = ViewBag.ProductName ?? "Produse";
+    int? productId = ViewBag.ProductId;
+    bool isCart = ViewBag.IsCart ?? false;
+}
+
+<style>
+    .checkout-card-premium {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .gateway-option {
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        cursor: pointer;
+        transition: var(--transition);
+        background: var(--bg-alt);
+        text-align: center;
+        width: 100%;
+        display: block;
+        position: relative;
+    }
+
+    .gateway-option:hover {
+        border-color: var(--text-main);
+        background: #fff;
+    }
+
+    .gateway-option.active {
+        border-color: var(--accent-color);
+        background: #eff6ff;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .gateway-option input[type="radio"] {
+        display: none;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="checkout-card-premium">
+            <div class="mb-4">
+                <h2 class="fw-bold mb-1">Finalizare Comandă</h2>
+                <p class="text-muted">Alege strategia de reducere și metoda de plată</p>
+            </div>
+
+            <!-- STRATEGY PATTERN (REDUCERE) -->
+            <div class="mb-4 d-flex justify-content-end">
+                <form method="get" asp-action="Index" class="d-flex align-items-center gap-2">
+                    @if(productId.HasValue) {
+                        <input type="hidden" name="productId" value="@productId.Value" />
+                    }
+                    <label class="text-muted small fw-bold mb-0">Aplică Voucher:</label>
+                    <select name="strategyType" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                        <option value="Normal" selected="@(strategyType == "Normal")">Normal (Fără Reducere)</option>
+                        <option value="Holiday" selected="@(strategyType == "Holiday")">Holiday (-20%)</option>
+                        <option value="Clearance" selected="@(strategyType == "Clearance")">Clearance (-50%)</option>
+                    </select>
+                </form>
+            </div>
+
+            <div class="card-minimal bg-light border-0 p-4 mb-5 rounded-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-muted small text-uppercase fw-bold mb-1">Se plătește pentru funcționalitatea</div>
+                        <h4 class="fw-bold mb-0">@itemsName</h4>
+                        @if(isCart) {
+                            <div class="mt-2"><span class="badge bg-primary">Comandă din Coș</span></div>
+                        }
+                    </div>
+                    <div class="col-auto text-end">
+                        <div class="h3 fw-bold mb-0 text-success">@finalPrice.ToString("N0") @settings.DefaultCurrency</div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="ProcessPayment" method="post">
+                @if(productId.HasValue) {
+                    <input type="hidden" name="productId" value="@productId.Value" />
+                }
+                <input type="hidden" name="amountPaid" value="@finalPrice" />
+
+                <!-- ADAPTER PATTERN (PLATA) -->
+                <div class="mb-4">
+                    <h6 class="fw-bold text-uppercase small mb-3 text-muted">Alege Metoda de Plată</h6>
+                    <div class="row g-3" id="gatewayOptions">
+                        <div class="col-md-4">
+                            <label class="gateway-option active" id="lbl-paypal">
+                                <input type="radio" name="gateway" value="PayPal" checked onchange="selectGateway(this)" />
+                                <div class="gateway-logo" style="color:#003087;">PayPal</div>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="gateway-option" id="lbl-stripe">
+                                <input type="radio" name="gateway" value="Stripe" onchange="selectGateway(this)" />
+                                <div class="gateway-logo" style="color:#6366f1;">Stripe</div>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="gateway-option" id="lbl-googlepay">
+                                <input type="radio" name="gateway" value="GooglePay" onchange="selectGateway(this)" />
+                                <div class="gateway-logo" style="color:#0f172a;">G Pay</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-3 btn-lg mt-2">
+                    Procesează Plata — @finalPrice.ToString("N0") @settings.DefaultCurrency
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectGateway(radio) {
+        document.querySelectorAll('.gateway-option').forEach(b => b.classList.remove('active'));
+        radio.closest('.gateway-option').classList.add('active');
+    }
+</script>

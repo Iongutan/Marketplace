@@ -92,6 +92,10 @@
                 }
 
                 <div class="d-grid gap-3 d-sm-flex">
+                    <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@Model.Id"
+                       class="btn btn-outline-primary btn-lg px-5 py-3 rounded-pill fw-bold flex-grow-1 @(Model.Stock <= 0 ? "disabled" : "")">
+                       Adaugă în Coș
+                    </a>
                     <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@Model.Id" 
                        class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm flex-grow-1 @(Model.Stock <= 0 ? "disabled" : "")">
                        <i class="bi bi-cart-fill me-2"></i>Cumpără Acum

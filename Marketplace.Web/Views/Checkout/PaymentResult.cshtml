@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Rezultat Plată";
+    var settings = Marketplace.BusinessLogic.Singletons.MarketplaceSettings.Instance;
+}
+
+<div class="container text-center py-5">
+    @if(ViewBag.Success == true)
+    {
+        <h2 class="fw-bold mb-3 mt-4 text-success">Plata a fost procesată cu succes!</h2>
+        <p class="lead text-muted mb-4">
+            Ai plătit <strong>@ViewBag.Amount?.ToString("N0") @settings.DefaultCurrency</strong> 
+            pentru <strong>@ViewBag.ProductName</strong>.
+        </p>
+        <div class="alert alert-light border d-inline-block text-start mb-4">
+            <div class="mb-2"><strong>Metoda de plată:</strong> @ViewBag.GatewayName</div>
+            <div><strong>ID Tranzacție:</strong> #@(Guid.NewGuid().ToString().Substring(0,8).ToUpper())</div>
+        </div>
+    }
+    else
+    {
+        <h2 class="fw-bold mb-3 mt-4 text-danger">Plata a eșuat!</h2>
+        <p class="lead text-muted mb-4">Ne cerem scuze, dar tranzacția nu a fost autorizată prin @ViewBag.GatewayName.</p>
+    }
+
+    <div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Întoarce-te la Magazin</a>
+    </div>
+</div>

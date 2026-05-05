@@ -1,0 +1,108 @@
+@using Marketplace.BusinessLogic.Mediator
+@{
+    ViewData["Title"] = "Chat Marketplace";
+    var history = ViewBag.History as List<ChatMessage> ?? new List<ChatMessage>();
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <!-- Header -->
+        <div class="text-center mb-4 mt-4">
+            <h1 class="fw-bold mb-1">Chat Marketplace</h1>
+            <p class="text-muted mb-0">Comunicați cu alte departamente sau clienți.</p>
+        </div>
+
+
+
+        <!-- Chat window -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <span>Istoricul Conversației (@history.Count mesaje)</span>
+                <form asp-controller="Chat" asp-action="Reset" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-light">Resetare chat</button>
+                </form>
+            </div>
+            <div class="card-body p-0">
+                <div id="chatBox" style="height:360px;overflow-y:auto;padding:1rem;background:#f8f9fa;">
+                    @if (!history.Any())
+                    {
+                        <div class="text-center text-muted py-4">
+                            <p>Niciun mesaj. Începeți conversația!</p>
+                        </div>
+                    }
+                    @foreach (var msg in history)
+                    {
+                        string bubbleColor = msg.SenderRole switch
+                        {
+                            "Cumpărător" => "#d4edda",
+                            "Vânzător"   => "#cce5ff",
+                            "Suport"     => "#e2d9f3",
+                            _            => "#f8f9fa"
+                        };
+                        string roleIcon = msg.SenderRole switch
+                        {
+                            "Cumpărător" => "U",
+                            "Vânzător"   => "V",
+                            "Suport"     => "S",
+                            _            => "C"
+                        };
+                        <div class="mb-3">
+                            <div class="d-flex align-items-start gap-2">
+                                <span class="badge bg-secondary rounded-circle" style="width:30px;height:30px;line-height:22px;text-align:center;">@roleIcon</span>
+                                <div style="max-width:80%;">
+                                    <div class="d-flex gap-2 align-items-baseline mb-1">
+                                        <strong style="font-size:0.85rem;">@msg.SenderName</strong>
+                                        <span class="badge text-bg-secondary" style="font-size:0.65rem;">@msg.SenderRole</span>
+                                        <small class="text-muted" style="font-size:0.7rem;">@msg.SentAt.ToString("HH:mm")</small>
+                                    </div>
+                                    <div class="rounded-3 px-3 py-2" style="background:@bubbleColor;font-size:0.9rem;">
+                                        @msg.Content
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Send message -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white">Trimite Mesaj</div>
+            <div class="card-body p-4">
+                <form asp-controller="Chat" asp-action="Send" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Rol expeditor</label>
+                            <select name="senderRole" id="senderRole" class="form-select">
+                                <option value="Buyer">Cumpărător</option>
+                                <option value="Seller">Vânzător</option>
+                                <option value="Support">Suport</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Mesaj</label>
+                            <div class="input-group">
+                                <input type="text" name="message" id="chatMessage" class="form-control"
+                                       placeholder="Scrieți mesajul..." required />
+                                <button type="submit" class="btn btn-primary">Trimite</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Auto-scroll chat to bottom
+    document.addEventListener('DOMContentLoaded', function() {
+        var box = document.getElementById('chatBox');
+        if (box) box.scrollTop = box.scrollHeight;
+    });
+</script>
+}

@@ -75,6 +75,19 @@
                 <div class="alert alert-danger mb-4">@TempData["Error"]</div>
             }
 
+            <!-- ==== STRATEGY PATTERN LOCAT AICI ==== -->
+            <div class="mb-4 d-flex justify-content-end">
+                <form method="get" asp-action="Checkout" class="d-flex align-items-center gap-2">
+                    <input type="hidden" name="productId" value="@product.Id" />
+                    <label class="text-muted small fw-bold mb-0">Aplică Voucher (Strategy):</label>
+                    <select name="strategyType" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                        @if(ViewBag.StrategyType == "Normal") { <option value="Normal" selected>Normal</option> } else { <option value="Normal">Normal</option> }
+                        @if(ViewBag.StrategyType == "Holiday") { <option value="Holiday" selected>Holiday (-20%)</option> } else { <option value="Holiday">Holiday (-20%)</option> }
+                        @if(ViewBag.StrategyType == "Clearance") { <option value="Clearance" selected>Clearance (-50%)</option> } else { <option value="Clearance">Clearance (-50%)</option> }
+                    </select>
+                </form>
+            </div>
+
             <div class="card-minimal bg-light border-0 p-4 mb-5 rounded-4">
                 <div class="row align-items-center">
                     <div class="col">
@@ -88,7 +101,15 @@
                         </div>
                     </div>
                     <div class="col-auto text-end">
-                        <div class="h3 fw-bold mb-0">@product.Price?.ToString("N0") @settings.DefaultCurrency</div>
+                        @{
+                            decimal originalPrice = product.Price ?? 0m;
+                            decimal finalPrice = ViewBag.FinalPrice ?? originalPrice;
+                        }
+                        @if(ViewBag.StrategyType != "Normal")
+                        {
+                            <div class="text-muted text-decoration-line-through small">@originalPrice.ToString("N0") @settings.DefaultCurrency</div>
+                        }
+                        <div class="h3 fw-bold mb-0 text-success">@finalPrice.ToString("N0") @settings.DefaultCurrency</div>
                     </div>
                 </div>
             </div>

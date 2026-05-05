@@ -23,7 +23,7 @@
                 <h1 class="display-5 fw-bold mb-1">Admin Dashboard</h1>
                 <p class="text-muted small">Supraveghere globală a tuturor anunțurilor și activității utilizatorilor.</p>
             </div>
-            <div class="d-flex gap-2 mb-1">
+            <div class="d-flex gap-2 mb-1 flex-wrap">
                 <a asp-action="QuickCreate" asp-route-type="Laptop"
                     class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
                     + Laptop Rapid
@@ -39,7 +39,49 @@
             </div>
         </div>
 
+        <!-- Instrumente Suplimentare -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <h6 class="text-muted text-uppercase fw-bold" style="letter-spacing:.05em;font-size:.75rem;">Instrumente Suplimentare</h6>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a asp-controller="Support" asp-action="Index" class="card h-100 text-decoration-none border-0 shadow-sm text-center p-3 hover-lift">
+                    <div class="fw-semibold mt-1">Suport Tehnic</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a asp-controller="Order" asp-action="OrderStatus" class="card h-100 text-decoration-none border-0 shadow-sm text-center p-3 hover-lift">
+                    <div class="fw-semibold mt-1">Status Comandă</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a asp-controller="Chat" asp-action="Index" class="card h-100 text-decoration-none border-0 shadow-sm text-center p-3 hover-lift">
+                    <div class="fw-semibold mt-1">Chat Intern</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a asp-controller="Admin" asp-action="Reports" class="card h-100 text-decoration-none border-0 shadow-sm text-center p-3 hover-lift">
+                    <div class="fw-semibold mt-1">Rapoarte</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a asp-controller="Admin" asp-action="ExportProducts" class="card h-100 text-decoration-none border-0 shadow-sm text-center p-3 hover-lift">
+                    <div class="fw-semibold mt-1">Export Date</div>
+                </a>
+            </div>
+        </div>
+
         <div class="card card-minimal shadow-sm border-0">
+            @if (TempData["ObserverMessage"] != null)
+            {
+                <div class="alert alert-success m-3 d-flex align-items-center" role="alert">
+                    <span class="display-6 me-3">🔔</span>
+                    <div>
+                        <h5 class="alert-heading fw-bold mb-1">Notificare preț trimisă abonaților</h5>
+                        <p class="mb-0">@TempData["ObserverMessage"]</p>
+                    </div>
+                </div>
+            }
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0 table-compact">
                     <thead>

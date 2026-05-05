@@ -48,11 +48,27 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label asp-for="Price" class="form-label text-uppercase small letter-spacing-wide">Preț
+                    <label for="Price" class="form-label text-uppercase small letter-spacing-wide">Preț
                         (MDL)</label>
-                    <input asp-for="Price" type="number" step="1"
+                    <input type="number" id="Price" name="Price" step="1" min="0"
+                        value="@((int)(Model.Price ?? 0))"
                         class="form-control form-control-lg border-light-subtle rounded-3" required />
                     <span asp-validation-for="Price" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label text-uppercase small letter-spacing-wide">Strategie Preț
+                        <span class="text-muted fw-normal">(Strategy Pattern)</span></label>
+                    <select name="pricingStrategy" id="pricingStrategy" class="form-select form-select-lg border-light-subtle rounded-3" onchange="applyStrategy(this.value)">
+                        <option value="regular" selected>Preț Regulat (fără reducere)</option>
+                        <option value="holiday">Reducere Sărbători (−20%)</option>
+                        <option value="clearance">Lichidare Stoc (−50%)</option>
+                    </select>
+                    <div id="strategyPreview" class="mt-2 small text-muted d-none">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
+                            💰 Preț calculat: <span id="strategyResult"></span> MDL
+                        </span>
+                    </div>
                 </div>
 
                 <div class="col-md-3">
@@ -107,6 +123,30 @@
         </div>
     </div>
 </div>
+
+<script>
+    function applyStrategy(strategy) {
+        const priceInput = document.getElementById('Price');
+        const basePrice = parseInt(priceInput.value) || 0;
+        const preview = document.getElementById('strategyPreview');
+        const resultSpan = document.getElementById('strategyResult');
+
+        if (strategy === 'regular') {
+            preview.classList.add('d-none');
+            return;
+        }
+
+        let newPrice = basePrice;
+        if (strategy === 'holiday') newPrice = Math.round(basePrice * 0.8);
+        else if (strategy === 'clearance') newPrice = Math.round(basePrice * 0.5);
+
+        resultSpan.textContent = newPrice.toLocaleString('ro-MD');
+        preview.classList.remove('d-none');
+
+        // Update the price field so the form submits the discounted price
+        priceInput.value = newPrice;
+    }
+</script>
 
 <style>
     .letter-spacing-wide {

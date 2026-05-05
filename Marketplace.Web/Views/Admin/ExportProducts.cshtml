@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Export Produse";
+    string format = ViewBag.Format as string ?? "Html";
+    string exportHtml = ViewBag.ExportHtml as string ?? "";
+}
+
+<div class="mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+        <h1 class="fw-bold mb-1">Export Produse</h1>
+    </div>
+    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-outline-secondary">← Dashboard</a>
+</div>
+
+
+
+<!-- Format selector -->
+<div class="d-flex gap-3 mb-4 flex-wrap">
+    <a asp-controller="Admin" asp-action="ExportProducts" asp-route-format="Html"
+       class="btn @(format == "Html" ? "btn-dark" : "btn-outline-dark")">
+        Preview HTML
+    </a>
+    <a asp-controller="Admin" asp-action="ExportProducts" asp-route-format="Csv"
+       class="btn @(format == "Csv" ? "btn-success" : "btn-outline-success")">
+        Descarcă CSV
+    </a>
+    <a asp-controller="Admin" asp-action="ExportProducts" asp-route-format="Json"
+       class="btn @(format == "Json" ? "btn-info" : "btn-outline-info")">
+        Descarcă JSON
+    </a>
+</div>
+
+<!-- HTML Preview -->
+@if (format == "Html" && !string.IsNullOrEmpty(exportHtml))
+{
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white d-flex justify-content-between">
+            <span>Preview Export HTML</span>
+        </div>
+        <div class="card-body p-4 table-responsive">
+            @Html.Raw(exportHtml)
+        </div>
+    </div>
+
+}

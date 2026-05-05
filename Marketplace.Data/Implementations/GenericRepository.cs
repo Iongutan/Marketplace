@@ -35,7 +35,13 @@ namespace Marketplace.Data.Implementations
 
         public void Update(T obj)
         {
-            table.Attach(obj);
+            // Detach any already-tracked instance with the same key
+            // to avoid "another instance with the same key value is already tracked" conflict
+            var tracked = _context.ChangeTracker.Entries<T>()
+                .FirstOrDefault(e => e.Entity.Id == obj.Id);
+            if (tracked != null)
+                tracked.State = EntityState.Detached;
+
             _context.Entry(obj).State = EntityState.Modified;
             _context.SaveChanges();
         }

@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Rapoarte Admin";
+    string reportType = ViewBag.ReportType as string ?? "Sales";
+    string reportHtml = ViewBag.ReportHtml as string ?? "";
+}
+
+<div class="mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+        <h1 class="fw-bold mb-1">Rapoarte Platformă</h1>
+    </div>
+    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-outline-secondary">← Dashboard</a>
+</div>
+
+<!-- Report type selector -->
+<div class="row g-3 mb-4">
+    @foreach (var (key, label, desc, color) in new[] {
+        ("Sales",        "Vânzări Produse",       "Top produse după preț, stoc și categorie",   "primary"),
+        ("UserActivity", "Activitate Utilizatori", "Grupare vânzători și produse listate",         "success"),
+        ("Inventory",    "Stocuri Inventar",       "Vizualizare grafică niveluri stoc",            "warning"),
+    })
+    {
+        bool active = reportType == key;
+        <div class="col-md-4">
+            <a asp-controller="Admin" asp-action="Reports" asp-route-reportType="@key"
+               class="card h-100 text-decoration-none border-@(active ? color : "0") shadow-sm @(active ? "border-2" : "")">
+                <div class="card-body text-center p-4">
+                    <h6 class="fw-bold mt-2 mb-1 text-dark">@label</h6>
+                    <small class="text-muted">@desc</small>
+                    @if (active)
+                    {
+                        <div class="mt-2"><span class="badge bg-@color">Activ</span></div>
+                    }
+                </div>
+            </a>
+        </div>
+    }
+</div>
+
+
+
+<!-- Generated report -->
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        @Html.Raw(reportHtml)
+    </div>
+</div>
+
+

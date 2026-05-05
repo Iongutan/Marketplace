@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Marketplace.BusinessLogic.Interfaces;
 using Marketplace.BusinessLogic.Core;
 using Marketplace.Domain.Entities;
+using Marketplace.BusinessLogic.TemplateMethod;
+using Marketplace.BusinessLogic.Visitor;
 using System.Linq;
+using System.Text;
 
 namespace Marketplace.Web.Controllers
 {
@@ -36,10 +39,30 @@ namespace Marketplace.Web.Controllers
         }
 
         [HttpPost]
-        public async System.Threading.Tasks.Task<IActionResult> EditProduct(Product product, Microsoft.AspNetCore.Http.IFormFile? ImageFile)
+        public async System.Threading.Tasks.Task<IActionResult> EditProduct(Product product, Microsoft.AspNetCore.Http.IFormFile? ImageFile, string? pricingStrategy)
         {
+            // Remove fields not needed for re-validation on edit
+            ModelState.Remove("UserId");
+            ModelState.Remove("CreatedDate");
+
             if (ModelState.IsValid)
             {
+                var oldProduct = _productService.GetProductById(product.Id);
+                decimal oldPrice = oldProduct?.Price ?? 0m;
+
+                // ==== STRATEGY PATTERN ====
+                // Apply the chosen pricing strategy to the base price
+                Marketplace.BusinessLogic.Strategy.IPricingStrategy strategy = pricingStrategy switch
+                {
+                    "holiday"   => new Marketplace.BusinessLogic.Strategy.HolidayDiscountStrategy(),
+                    "clearance" => new Marketplace.BusinessLogic.Strategy.ClearanceStrategy(),
+                    _           => new Marketplace.BusinessLogic.Strategy.RegularPricingStrategy()
+                };
+                var calculator = new Marketplace.BusinessLogic.Strategy.PriceCalculatorContext(strategy);
+                decimal basePrice = product.Price ?? 0m;
+                // Round to whole number — no .99 decimals
+                product.Price = Math.Round(calculator.Calculate(basePrice), 0, MidpointRounding.AwayFromZero);
+
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
                     var uploadsFolder = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "products");
@@ -54,6 +77,25 @@ namespace Marketplace.Web.Controllers
                     product.ImageUrl = "/uploads/products/" + uniqueFileName;
                 }
                 _productService.UpdateProduct(product);
+
+                // ==== OBSERVER PATTERN ====
+                if (oldProduct != null && product.Price != oldPrice)
+                {
+                    var subject = new Marketplace.BusinessLogic.Observer.ProductPriceSubject(product.Name ?? "Produs", oldPrice);
+                    subject.Attach(new Marketplace.BusinessLogic.Observer.CustomerObserver("Abonați Newsletter"));
+                    subject.Attach(new Marketplace.BusinessLogic.Observer.CustomerObserver("Utilizatorul VIP"));
+
+                    subject.Price = product.Price ?? 0m; // This triggers Notify() internally
+
+                    string strategyLabel = pricingStrategy switch
+                    {
+                        "holiday"   => "Reducere Sărbători (−20%)",
+                        "clearance" => "Lichidare Stoc (−50%)",
+                        _           => "Preț Regulat"
+                    };
+                    TempData["ObserverMessage"] = $"Abonații au fost notificați: prețul la \"{product.Name}\" s-a schimbat de la {(int)oldPrice} MDL la {(int)(product.Price ?? 0)} MDL. Strategie aplicată: {strategyLabel}.";
+                }
+
                 return RedirectToAction("Dashboard");
             }
             return View(product);
@@ -155,6 +197,57 @@ namespace Marketplace.Web.Controllers
             var user = _userApi.GetUserById(id);
             if (user == null) return NotFound();
             return View(user);
+        }
+
+        // ==== TEMPLATE METHOD PATTERN (Lab 7) ====
+        [HttpGet]
+        public IActionResult Reports(string reportType = "Sales")
+        {
+            var products = _productService.GetProducts().ToList();
+
+            ReportGenerator generator = reportType switch
+            {
+                "UserActivity" => new UserActivityReport(),
+                "Inventory"   => new InventoryReport(),
+                _             => new ProductSalesReport()
+            };
+
+            ViewBag.ReportHtml = generator.GenerateReport(products);
+            ViewBag.ReportType = reportType;
+            ViewBag.ReportTitle = generator.ReportTitle;
+            return View();
+        }
+
+        // ==== VISITOR PATTERN (Lab 7) ====
+        [HttpGet]
+        public IActionResult ExportProducts(string format = "Html")
+        {
+            var products = _productService.GetProducts().ToList();
+
+            IProductVisitor visitor = format switch
+            {
+                "Csv"  => new CsvExportVisitor(),
+                "Json" => new JsonExportVisitor(),
+                _      => new HtmlExportVisitor()
+            };
+
+            // Aplicăm vizitorul pe fiecare produs
+            foreach (var product in products)
+            {
+                var visitable = new VisitableProduct(product);
+                visitable.Accept(visitor);
+            }
+
+            string result = visitor.GetResult();
+
+            if (format == "Csv")
+                return File(Encoding.UTF8.GetBytes(result), "text/csv", "produse_export.csv");
+            if (format == "Json")
+                return File(Encoding.UTF8.GetBytes(result), "application/json", "produse_export.json");
+
+            ViewBag.ExportHtml = result;
+            ViewBag.Format = format;
+            return View();
         }
 
         [HttpPost]

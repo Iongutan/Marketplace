@@ -1,0 +1,95 @@
+@model IEnumerable<Marketplace.Domain.Entities.Product>
+@using Marketplace.BusinessLogic.Singletons
+@{
+    ViewData["Title"] = "Coșul tău de cumpărături";
+    var settings = MarketplaceSettings.Instance;
+    decimal total = Model.Sum(x => x.Price ?? 0);
+}
+
+<div class="row mb-5 align-items-end">
+    <div class="col">
+        <h1 class="display-6 fw-bold mb-1">@ViewData["Title"]</h1>
+        <p class="text-muted small mb-0">Gestionează produsele din coșul tău</p>
+    </div>
+    <div class="col-auto text-end d-flex flex-wrap gap-2">
+        <a asp-action="SaveCart" class="btn btn-outline-secondary btn-sm">Salvează Coș</a>
+        <a asp-action="RestoreCart" class="btn btn-light btn-sm">Restaurează Coș Anterior</a>
+        <a asp-action="UndoLastAdd" class="btn btn-light btn-sm text-danger">Șterge Ultim Produs</a>
+        <a asp-controller="Order" asp-action="OrderStatus" class="btn btn-primary btn-sm ms-lg-3">Comenzi în Livrare</a>
+    </div>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success card-minimal border-0 shadow-sm d-flex align-items-center mb-4">
+        <div class="fw-bold text-main">@TempData["Message"]</div>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <h3 class="fw-bold mb-2">Coșul tău este gol</h3>
+        <p class="text-muted mb-4">Nu ai adăugat încă niciun produs în coș.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4 py-2">
+            Înapoi la cumpărături
+        </a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card-minimal p-4">
+                <h5 class="fw-bold mb-4">Produse în coș (@Model.Count())</h5>
+                <div class="d-flex flex-column gap-3">
+                    @foreach(var item in Model)
+                    {
+                         <div class="d-flex align-items-center p-3 rounded-4" style="background: var(--bg-alt); border: 1px solid var(--border-color);">
+                            @if(!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" class="rounded-3 me-4" style="width: 70px; height: 70px; object-fit: cover;" />
+                            }
+                            else 
+                            {
+                                <div class="rounded-3 me-4 bg-white d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; border: 1px solid var(--border-color);">
+                                    <span class="text-muted fw-bold">M</span>
+                                </div>
+                            }
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-1 text-main">@item.Name</h6>
+                                <span class="badge @(item.IsDigital == true ? "bg-info" : "bg-secondary") mb-0">
+                                    @(item.IsDigital == true ? "Digital" : "Fizic")
+                                </span>
+                                <span class="text-muted small ms-2">@(item.Brand ?? "Fără brand")</span>
+                            </div>
+                            <div class="text-end ms-4">
+                                <div class="fw-bold h5 mb-0 text-main">@((item.Price ?? 0).ToString("N0")) @settings.DefaultCurrency</div>
+                            </div>
+                         </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card-minimal p-4 sticky-top" style="top: 100px;">
+                <h5 class="fw-bold mb-4">Sumar Comandă</h5>
+                <div class="d-flex justify-content-between text-muted mb-3">
+                    <span>Subtotal</span>
+                    <span class="text-main fw-bold">@total.ToString("N0") @settings.DefaultCurrency</span>
+                </div>
+                <div class="d-flex justify-content-between text-muted mb-4 pb-4 border-bottom">
+                    <span>Taxe de procesare</span>
+                    <span>Gratuit</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-end mb-4">
+                    <span class="fw-bold">Total:</span>
+                    <span class="h2 fw-bold text-success mb-0 d-flex flex-column align-items-end">
+                        @total.ToString("N0") @settings.DefaultCurrency
+                    </span>
+                </div>
+                <a asp-controller="Checkout" asp-action="Index" class="btn btn-primary w-100 btn-lg py-3">Finalizează Comanda</a>
+            </div>
+        </div>
+    </div>
+}

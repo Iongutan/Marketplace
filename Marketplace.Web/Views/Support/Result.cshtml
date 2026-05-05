@@ -1,0 +1,63 @@
+@using Marketplace.BusinessLogic.ChainOfResponsibility
+@model SupportRequest
+@{
+    ViewData["Title"] = "Rezultat Cerere Suport";
+    string badgeColor = Model.Type switch
+    {
+        SupportType.Delivery => "primary",
+        SupportType.Return   => "warning text-dark",
+        SupportType.Store    => "secondary",
+        _ => "secondary"
+    };
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        <!-- Success header -->
+        <div class="text-center mb-5 mt-4">
+            <h1 class="fw-bold text-success">Cerere Procesată</h1>
+            <p class="text-muted">Cererea dvs. a fost trimisă către departamentul potrivit.</p>
+        </div>
+
+        <!-- Result card -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><strong>#@Model.Id</strong> — @Model.Subject</span>
+                    <span class="badge @badgeColor">@Model.Type</span>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <table class="table table-borderless mb-3">
+                    <tr><td class="text-muted fw-semibold" style="width:150px;">Client:</td><td><strong>@Model.CustomerName</strong></td></tr>
+                    <tr><td class="text-muted fw-semibold">Handler:</td><td><span class="badge bg-dark">@Model.HandledBy</span></td></tr>
+                    <tr><td class="text-muted fw-semibold">Data:</td><td>@Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")</td></tr>
+                </table>
+
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="alert alert-light border mb-3">
+                        <small class="text-muted d-block mb-1">Descriere trimisă:</small>
+                        @Model.Description
+                    </div>
+                }
+
+                <div class="alert alert-success border-success">
+                    <strong>Răspuns:</strong><br />
+                    @Model.Resolution
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4 d-flex gap-3 justify-content-center">
+            <a asp-controller="Support" asp-action="Index" class="btn btn-outline-dark">
+                ← Trimite altă cerere
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-dark">
+                Acasă
+            </a>
+        </div>
+
+    </div>
+</div>
